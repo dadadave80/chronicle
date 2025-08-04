@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity 0.8.30;
 
 import {Diamond} from "@diamond/Diamond.sol";
 import {DiamondArgs, FacetCut} from "@diamond/libraries/types/DiamondTypes.sol";
