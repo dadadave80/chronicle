@@ -4,3 +4,6 @@
 [submodule "lib/hedera-smart-contracts"]
 	path = lib/hedera-smart-contracts
 	url = https://github.com/hashgraph/hedera-smart-contracts
+[submodule "lib/erc2535-diamond-template"]
+	path = lib/erc2535-diamond-template
+	url = https://github.com/dadadave80/erc2535-diamond-template
