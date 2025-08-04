@@ -7,3 +7,6 @@
 [submodule "lib/erc2535-diamond-template"]
 	path = lib/erc2535-diamond-template
 	url = https://github.com/dadadave80/erc2535-diamond-template
+[submodule "lib/openzeppelin-contracts"]
+	path = lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
