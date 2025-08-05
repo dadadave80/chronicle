@@ -17,9 +17,9 @@ import "@chainsight-logs/ProductLogs.sol";
 library LibProduct {
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    function _productStorage() internal pure returns (ProductStorage storage prs_) {
+    function _productStorage() internal pure returns (ProductStorage storage pds_) {
         assembly {
-            prs_.slot := PRODUCT_STORAGE_SLOT
+            pds_.slot := PRODUCT_STORAGE_SLOT
         }
     }
 
