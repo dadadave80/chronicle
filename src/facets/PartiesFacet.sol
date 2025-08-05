@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Role} from "@chainsight-types/PartyTypes.sol";
+import {Role} from "@chainsight-types/PartyStorage.sol";
 import {LibParty} from "@chainsight/libraries/LibParty.sol";
 
 contract PartiesFacet {
