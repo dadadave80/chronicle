@@ -2,8 +2,14 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+auto_detect_remappings = true
 remappings = [
-    '@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/'
+    '@chainsight/=src/',
+    '@chainsight-test/=test/',
+    '@chainsight-script/=script/',
+    '@chainsight-types/=src/libraries/types/',
+    '@chainsight-logs/=src/libraries/logs/',
+    '@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/',
+    'hedera-token-service/=lib/hedera-smart-contracts/contracts/system-contracts/hedera-token-service/',
+    'hedera-system-contracts/=lib/hedera-smart-contracts/contracts/system-contracts/'
 ]
-
-# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
