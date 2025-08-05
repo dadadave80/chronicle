@@ -9,7 +9,7 @@ import {HederaResponseCodes} from "hedera-system-contracts/HederaResponseCodes.s
 import {LibHederaTokenService} from "@chainsight/libraries/hts/LibHederaTokenService.sol";
 import {LibContext} from "@chainsight/libraries/LibContext.sol";
 import {Role} from "@chainsight-types/PartyStorage.sol";
-import {Status, Product, ProductStorage, PRODUCT_STORAGE_SLOT} from "@chainsight-types/ProductTypes.sol";
+import {Status, Product, ProductStorage, PRODUCT_STORAGE_SLOT} from "@chainsight-types/ProductStorage.sol";
 import {LibParty} from "@chainsight/libraries/LibParty.sol";
 import {LibKeyHelper} from "@chainsight/libraries/hts/LibKeyHelper.sol";
 import "@chainsight-logs/ProductLogs.sol";
