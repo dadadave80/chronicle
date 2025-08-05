@@ -23,10 +23,6 @@ contract PartiesFacet {
         return _role._getPartiesByRole();
     }
 
-    function getManufacturers() public view returns (address[] memory) {
-        return LibParty._getManufacturers();
-    }
-
     function getSuppliers() public view returns (address[] memory) {
         return LibParty._getSuppliers();
     }

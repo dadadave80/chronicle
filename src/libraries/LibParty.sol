@@ -69,10 +69,6 @@ library LibParty {
         return _partyStorage().roles[_role].values();
     }
 
-    function _getManufacturers() internal view returns (address[] memory) {
-        return _partyStorage().roles[Role.Manufacturer].values();
-    }
-
     function _getSuppliers() internal view returns (address[] memory) {
         return _partyStorage().roles[Role.Supplier].values();
     }

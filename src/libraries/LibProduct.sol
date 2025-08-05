@@ -25,7 +25,7 @@ library LibProduct {
 
     function _createProduct(string calldata _name, uint256 _price) internal {
         address sender = LibContext._msgSender();
-        if (!LibParty._isActiveRole(sender, Role.Manufacturer)) revert("Not a Manufacturer");
+        if (!LibParty._isActiveRole(sender, Role.Supplier)) revert("Not a Supplier");
         IHederaTokenService.KeyValue memory key = IHederaTokenService.KeyValue({
             inheritAccountKey: true,
             contractId: address(0),
