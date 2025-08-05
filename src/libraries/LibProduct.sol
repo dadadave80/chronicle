@@ -11,6 +11,7 @@ import {LibContext} from "@chainsight/libraries/LibContext.sol";
 import {Role} from "@chainsight-types/PartyStorage.sol";
 import {Status, Product, ProductStorage, PRODUCT_STORAGE_SLOT} from "@chainsight-types/ProductTypes.sol";
 import {LibParty} from "@chainsight/libraries/LibParty.sol";
+import {LibKeyHelper} from "@chainsight/libraries/hts/LibKeyHelper.sol";
 import "@chainsight-logs/ProductLogs.sol";
 
 library LibProduct {
@@ -41,7 +42,7 @@ library LibProduct {
         token.tokenKeys = tokenKeys;
 
         (int256 responseCode, address tokenAddress) = LibHederaTokenService.createNonFungibleToken(token);
-        if (responseCode != HederaResponseCodes.SUCCESS) revert("");
+        if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");
         if (tokenAddress != address(0)) {
             _productStorage().activeProducts.add(tokenAddress);
             _productStorage().products[tokenAddress].push(
