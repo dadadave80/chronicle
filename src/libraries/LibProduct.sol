@@ -125,6 +125,22 @@ library LibProduct {
         });
     }
 
+    function _getProduct(address _tokenAddress) internal view returns (Product memory) {
+        return _productStorage().tokenToProduct[_tokenAddress];
+    }
+
+    function _getProductTokenAddresses() internal view returns (address[] memory) {
+        return _productStorage().activeProducts.values();
+    }
+
+    function _getProducts() internal view returns (Product[] memory products_) {
+        address[] memory tokenAddresses = _getProductTokenAddresses();
+        products_ = new Product[](tokenAddresses.length);
+        for (uint256 i; i < tokenAddresses.length; ++i) {
+            products_[i] = _getProduct(tokenAddresses[i]);
+        }
+    }
+
     // function _transferProduct(uint256 _id, address _to, Status _newStatus) internal {
 
     //     emit ProductTransferred(_id, msg.sender, _to, _newStatus);
