@@ -2,7 +2,6 @@
 pragma solidity 0.8.30;
 
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import {LibOwnableRoles} from "@diamond/libraries/LibOwnableRoles.sol";
 import {Party, Role, PartyStorage, PARTY_STORAGE_SLOT} from "@chronicle-types/PartyStorage.sol";
 import {LibContext} from "@chronicle/libraries/LibContext.sol";
 import "@chronicle-logs/PartyLogs.sol";
@@ -16,27 +15,15 @@ library LibParty {
         }
     }
 
-    modifier onlyOwner() {
-        LibOwnableRoles._checkOwner();
-        _;
-    }
-
-    modifier onlyOwnerOrRoles(Role _role) {
-        LibOwnableRoles._checkOwnerOrRoles(uint256(keccak256(abi.encodePacked(LibContext._msgSender(), _role))));
-        _;
-    }
-
     function _registerParty(string calldata _name, Role _role) internal {
         PartyStorage storage $ = _partyStorage();
         address sender = LibContext._msgSender();
-        LibOwnableRoles._grantRoles(sender, uint256(keccak256(abi.encodePacked(sender, _role))));
         $.parties[sender] = Party(_name, _role, true, 0);
         $.activeParties.add(sender);
         $.roles[_role].add(sender);
         emit PartyRegistered(sender, _name, _role);
     }
 
-    function _deactivateParty(Role _role) internal onlyOwnerOrRoles(_role) {
         PartyStorage storage $ = _partyStorage();
         address sender = LibContext._msgSender();
         $.parties[sender].active = false;
