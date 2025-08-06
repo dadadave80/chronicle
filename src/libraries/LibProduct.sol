@@ -161,18 +161,5 @@ library LibProduct {
         }
     }
 
-    // function _transferProduct(uint256 _id, address _to, Status _newStatus) internal {
 
-    //     emit ProductTransferred(_id, msg.sender, _to, _newStatus);
-    // }
-
-    // function getHistory(uint256 _id) external view returns (ProductHistory[] memory) {
-    //     return history[_id];
-    // }
-
-    // function _getProductsByOwner(address _owner) internal view returns (Product[] memory) {
-    //     // iterate stored products (or maintain owner → products index mapping)
-    //     // for brevity, not fully implemented here
-    //     revert("Not implemented");
-    // }
 }
