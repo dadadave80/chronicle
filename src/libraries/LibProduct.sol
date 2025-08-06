@@ -60,6 +60,25 @@ library LibProduct {
         emit ProductCreated(product);
     }
 
+    // TODO: implement
+    // function _updateProduct(address _tokenAddress, Product memory _product) internal {
+    //     ProductStorage storage $ = _productStorage();
+    //     if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
+    //     if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
+    //     $.tokenToProduct[_tokenAddress] = _product;
+    // }
+
+    // function _updateProductTokenInfo(address _tokenAddress, IHederaTokenService.HederaToken memory tokenInfo)
+    //     internal
+    // {
+    //     address sender = LibContext._msgSender();
+    //     ProductStorage storage $ = _productStorage();
+    //     if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
+    //     if ($.tokenToProduct[_tokenAddress].owner != sender) revert("Not the owner");
+    //     int256 responseCode = _tokenAddress.updateTokenInfo(tokenInfo);
+    //     if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to update product token info");
+    // }
+
     function _createProductToken(string calldata _name, int64 _price)
         internal
         returns (int256 createResponseCode_, address tokenAddress_)
