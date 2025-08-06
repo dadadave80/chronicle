@@ -58,15 +58,9 @@ library LibParty {
         }
     }
 
-    function _getSuppliers() internal view returns (address[] memory) {
-        return _partyStorage().roles[Role.Supplier].values();
     }
 
-    function _getTransporters() internal view returns (address[] memory) {
-        return _partyStorage().roles[Role.Transporter].values();
     }
 
-    function _getRetailers() internal view returns (address[] memory) {
-        return _partyStorage().roles[Role.Retailer].values();
     }
 }
