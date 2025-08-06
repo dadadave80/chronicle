@@ -18,10 +18,11 @@ library LibParty {
     function _registerParty(string calldata _name, Role _role) internal {
         PartyStorage storage $ = _partyStorage();
         address sender = LibContext._msgSender();
-        $.parties[sender] = Party(_name, _role, true, 0);
-        $.activeParties.add(sender);
-        $.roles[_role].add(sender);
-        emit PartyRegistered(sender, _name, _role);
+        if ($.parties[sender].frozen) revert("Party frozen");
+        if (!$.roles[_role].add(sender)) revert("Role already exists");
+        if (!$.activeParties.add(sender)) revert("Party already exists");
+        $.parties[sender] = Party(_name, sender, _role, true, false, 0);
+        emit PartyRegistered($.parties[sender]);
     }
 
         PartyStorage storage $ = _partyStorage();
