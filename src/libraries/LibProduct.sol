@@ -74,6 +74,33 @@ library LibProduct {
         tokenKeys_[6] = KeyType.PAUSE.getSingleKey(KeyValueType.CONTRACT_ID, address(this));
     }
 
+    function _getProductFees(int64 _price)
+        internal
+        view
+        returns (IHederaTokenService.FixedFee[] memory fixedFees_, IHederaTokenService.RoyaltyFee[] memory royaltyFees_)
+    {
+        address usdcAddress = _productStorage().usdcAddress;
+
+        fixedFees_ = new IHederaTokenService.FixedFee[](1);
+        fixedFees_[0] = IHederaTokenService.FixedFee({
+            amount: _price,
+            tokenId: usdcAddress,
+            useHbarsForPayment: false,
+            useCurrentTokenForPayment: false,
+            feeCollector: address(this)
+        });
+
+        royaltyFees_ = new IHederaTokenService.RoyaltyFee[](1);
+        royaltyFees_[0] = IHederaTokenService.RoyaltyFee({
+            numerator: 1,
+            denominator: 1000,
+            amount: _price,
+            tokenId: usdcAddress,
+            useHbarsForPayment: false,
+            feeCollector: address(this)
+        });
+    }
+
     // function _transferProduct(uint256 _id, address _to, Status _newStatus) internal {
 
     //     emit ProductTransferred(_id, msg.sender, _to, _newStatus);
