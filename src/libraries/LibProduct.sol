@@ -56,6 +56,7 @@ library LibProduct {
             serialNumbers: serialNumbers
         });
         $.tokenToProduct[tokenAddress] = product;
+        $.ownerToProducts[sender].add(tokenAddress);
 
         emit ProductCreated(product);
     }

@@ -8,6 +8,7 @@ bytes32 constant PRODUCT_STORAGE_SLOT = 0x23ca794864a71b2543ff5b6b61845c569bb17e
 
 struct ProductStorage {
     mapping(address => Product) tokenToProduct;
+    mapping(address => EnumerableSet.AddressSet) ownerToProducts;
     EnumerableSet.AddressSet activeProducts;
 }
 
