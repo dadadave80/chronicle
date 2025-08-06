@@ -20,7 +20,9 @@ enum Role {
 
 struct Party {
     string name;
+    address addr;
     Role role;
     bool active;
+    bool frozen;
     uint8 rating; // 0-5
 }
