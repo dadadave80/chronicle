@@ -3,6 +3,6 @@ pragma solidity 0.8.30;
 
 import {Status, Product} from "@chronicle-types/ProductStorage.sol";
 
-event ProductCreated(address indexed tokenAddress, address indexed owner, Product product);
+event ProductCreated(Product indexed product);
 
 event ProductTransferred(address indexed tokenAddress, address from, address to, Status status);

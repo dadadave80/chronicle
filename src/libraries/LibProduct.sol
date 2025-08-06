@@ -57,7 +57,7 @@ library LibProduct {
         });
         $.products[sender].push(product);
 
-        emit ProductCreated(tokenAddress, sender, product);
+        emit ProductCreated(product);
     }
 
     function _createProductToken(string calldata _name, int64 _price)
