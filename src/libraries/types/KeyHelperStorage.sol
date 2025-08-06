@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-// keccak256(abi.encode(uint256(keccak256("com.chainsight.supplychain.keyhelper")) - 1)) & ~bytes32(uint256(0xff));
-bytes32 constant KEYHELPER_STORAGE_SLOT = 0x8af20a423babd3869b8e64d46cf3adb4ec2164fad5677b47c578153625f04d00;
+// keccak256(abi.encode(uint256(keccak256("com.hedera.hts.keyhelper.storage")) - 1)) & ~bytes32(uint256(0xff));
+bytes32 constant KEYHELPER_STORAGE_SLOT = 0xf36989252aea929a9621c3812c53b3a78ebee43ecec902e8d0c7d0a24c8b3f00;
 
 struct KeyHelperStorage {
     address supplyContract;
