@@ -45,12 +45,17 @@ library LibParty {
         return p.active && p.role == _role;
     }
 
-    function _getActiveParties() internal view returns (address[] memory) {
-        return _partyStorage().activeParties.values();
+    function _getParty(address _addr) internal view returns (Party memory) {
+        return _partyStorage().parties[_addr];
     }
 
-    function _getPartiesByRole(Role _role) internal view returns (address[] memory) {
-        return _partyStorage().roles[_role].values();
+    function _getActiveParties() internal view returns (Party[] memory parties_) {
+        PartyStorage storage $ = _partyStorage();
+        uint256 length = $.activeParties.length();
+        parties_ = new Party[](length);
+        for (uint256 i; i < length; ++i) {
+            parties_[i] = $.parties[$.activeParties.at(i)];
+        }
     }
 
     function _getSuppliers() internal view returns (address[] memory) {
