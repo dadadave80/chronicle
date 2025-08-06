@@ -16,3 +16,6 @@ docs/
 # IDE files
 .vscode
 .wake
+
+# MacOS files
+.DS_Store
