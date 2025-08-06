@@ -1,18 +1,35 @@
+import { RetroGrid } from "../magicui/retro-grid";
+
 const HeroSection = () => {
   return (
-    <section className="w-full h-[calc(100dvh-96px)] md:h-[calc(100dvh-110px)] bg-white relative overflow-hidden">
+    <section className="w-full h-[100dvh] md:h-[calc(100dvh-110px)] bg-white relative overflow-hidden">
       {/* Container for your main text content, centered */}
-      <div className="absolute inset-0 flex flex-col lg:items-start md:items-center justify-center z-10 pl-4 md:pl-8 xl:pl-32">
-        <h1 className="text-4xl font-nunitoSans md:text-6xl xl:text-7xl md:text-center lg:text-start font-extrabold text-white">
-          A New Dimension <br /> of Stability
+      <div className="flex flex-col items-center justify-center w-full h-full px-4 lg:px-0">
+        <h1 className="text-5xl md:text-6xl lg:text-8xl tracking-tighter capitalize font-ibm font-extrabold text-center text-[#000000E5] max-w-[1200px]">
+          Trace Every Step with Chronify
         </h1>
-        <p className="mt-4 text-xl xl:text-2xl font-marcellus text-[#FFFFFFCC] md:text-center lg:text-start max-w-xl xl:max-w-3xl">
-          EulerFi turns data into steady returns, charts a path to financial
-          resilience and unlock new growth opportunities.
+        <p className="mt-4 md:text-3xl text-xl font-marcellus text-[#000000CC] font-medium text-center max-w-4xl">
+          Chronify, empowers businesses and consumers with a secure, scalable
+          platform to track products from origin to you.
         </p>
+        <div className="w-full flex md:flex-row flex-col justify-center items-center md:gap-6 gap-4 lg:mt-8 mt-6">
+          <button
+            type="button"
+            className="h-[45px] flex justify-center items-center bg-black rounded-[8px] cursor-pointer text-base  font-[500] font-nunitoSans text-white px-6 border border-black"
+          >
+            Track your Product
+          </button>
+          <button
+            type="button"
+            className="h-[45px] flex justify-center items-center bg-white rounded-[8px] cursor-pointer text-base  font-[500] font-nunitoSans text-black px-6 border border-black"
+          >
+            Explore the Tech
+          </button>
+        </div>
       </div>
 
-      <div className="absolute top-1/2 -translate-y-1/2 md:-right-[10%] xl:-right-[5%] w-[90vh] h-[90vh] md:w-[100vh] md:h-[100vh] z-0 opacity-60 lg:opacity-100"></div>
+      {/*Retro Grid*/}
+      <RetroGrid />
     </section>
   );
 };

@@ -42,7 +42,7 @@ const Navbar = () => {
         />
 
         {/* Nav Links With Mega Menu Dropdown */}
-        <div className="hidden md:flex gap-[24px] items-center">
+        <div className="hidden lg:flex gap-[24px] items-center">
           {NavLinks.map((link, index) => (
             <Spy
               key={index}
