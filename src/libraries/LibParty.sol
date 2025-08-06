@@ -44,12 +44,6 @@ library LibParty {
         emit PartyDeactivated(sender);
     }
 
-    function _reactivateParty(Role _role) internal onlyOwnerOrRoles(_role) {
-        PartyStorage storage $ = _partyStorage();
-        address sender = LibContext._msgSender();
-        $.parties[sender].active = true;
-        $.activeParties.add(sender);
-        emit PartyActivated(sender);
     }
 
     function _isRole(Role _role) internal view returns (bool) {
