@@ -11,8 +11,6 @@ contract PartiesFacet {
         _name._registerParty(_role);
     }
 
-    function isActiveRole(address _addr, Role _role) public view returns (bool) {
-        return _addr._isActiveRole(_role);
     }
 
     function getAllActiveParties() public view returns (address[] memory) {
@@ -21,6 +19,8 @@ contract PartiesFacet {
 
     function getPartiesByRole(Role _role) public view returns (address[] memory) {
         return _role._getPartiesByRole();
+    function hasActiveRole(address _addr, Role _role) public view returns (bool) {
+        return _addr._hasActiveRole(_role);
     }
 
     function getSuppliers() public view returns (address[] memory) {

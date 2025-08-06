@@ -32,7 +32,7 @@ library LibProduct {
 
     function _createProduct(string calldata _name, int64 _price, int64 _initialSupply) internal {
         address sender = LibContext._msgSender();
-        if (!sender._isActiveRole(Role.Supplier)) revert("Not a Supplier");
+        if (!sender._hasActiveRole(Role.Supplier)) revert("Not a Supplier");
 
         (int256 createResponseCode, address tokenAddress) = _createProductToken(_name, _price);
         if (createResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");

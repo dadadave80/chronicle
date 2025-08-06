@@ -36,11 +36,11 @@ library LibParty {
 
     }
 
-    function _isRole(Role _role) internal view returns (bool) {
+    function _hasRole(Role _role) internal view returns (bool) {
         return _partyStorage().roles[_role].contains(LibContext._msgSender());
     }
 
-    function _isActiveRole(address _addr, Role _role) internal view returns (bool) {
+    function _hasActiveRole(address _addr, Role _role) internal view returns (bool) {
         Party memory p = _partyStorage().parties[_addr];
         return p.active && p.role == _role;
     }
