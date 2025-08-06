@@ -3,9 +3,9 @@ pragma solidity 0.8.30;
 
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import {LibOwnableRoles} from "@diamond/libraries/LibOwnableRoles.sol";
-import {Party, Role, PartyStorage, PARTY_STORAGE_SLOT} from "@chainsight-types/PartyStorage.sol";
-import {LibContext} from "@chainsight/libraries/LibContext.sol";
-import "@chainsight-logs/PartyLogs.sol";
+import {Party, Role, PartyStorage, PARTY_STORAGE_SLOT} from "@chronicle-types/PartyStorage.sol";
+import {LibContext} from "@chronicle/libraries/LibContext.sol";
+import "@chronicle-logs/PartyLogs.sol";
 
 library LibParty {
     using EnumerableSet for EnumerableSet.AddressSet;

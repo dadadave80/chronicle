@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {LibProduct} from "@chainsight/libraries/LibProduct.sol";
+import {LibProduct} from "@chronicle/libraries/LibProduct.sol";
 
 contract ProductsFacet {
     using LibProduct for *;

@@ -6,14 +6,14 @@ import {IHederaTokenService} from "hedera-token-service/IHederaTokenService.sol"
 import {HederaTokenService} from "hedera-token-service/HederaTokenService.sol";
 import {KeyHelper} from "hedera-token-service/KeyHelper.sol";
 import {HederaResponseCodes} from "hedera-system-contracts/HederaResponseCodes.sol";
-import {LibHederaTokenService} from "@chainsight/libraries/hts/LibHederaTokenService.sol";
-import {LibContext} from "@chainsight/libraries/LibContext.sol";
-import {Role} from "@chainsight-types/PartyStorage.sol";
-import {KeyType, KeyValueType} from "@chainsight-types/KeyHelperStorage.sol";
-import {Status, Product, ProductStorage, PRODUCT_STORAGE_SLOT} from "@chainsight-types/ProductStorage.sol";
-import {LibParty} from "@chainsight/libraries/LibParty.sol";
-import {LibKeyHelper} from "@chainsight/libraries/hts/LibKeyHelper.sol";
-import "@chainsight-logs/ProductLogs.sol";
+import {LibHederaTokenService} from "@chronicle/libraries/hts/LibHederaTokenService.sol";
+import {LibContext} from "@chronicle/libraries/LibContext.sol";
+import {Role} from "@chronicle-types/PartyStorage.sol";
+import {KeyType, KeyValueType} from "@chronicle-types/KeyHelperStorage.sol";
+import {Status, Product, ProductStorage, PRODUCT_STORAGE_SLOT} from "@chronicle-types/ProductStorage.sol";
+import {LibParty} from "@chronicle/libraries/LibParty.sol";
+import {LibKeyHelper} from "@chronicle/libraries/hts/LibKeyHelper.sol";
+import "@chronicle-logs/ProductLogs.sol";
 
 library LibProduct {
     using LibParty for address;

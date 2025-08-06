@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 
 import {HederaTokenService} from "hedera-token-service/HederaTokenService.sol";
 import {IHederaTokenService} from "hedera-token-service/IHederaTokenService.sol";
-import {KeyType, KeyValueType, KeyHelperStorage, KEYHELPER_STORAGE_SLOT} from "@chainsight-types/KeyHelperStorage.sol";
+import {KeyType, KeyValueType, KeyHelperStorage, KEYHELPER_STORAGE_SLOT} from "@chronicle-types/KeyHelperStorage.sol";
 
 library LibKeyHelper {
     using Bits for uint256;
