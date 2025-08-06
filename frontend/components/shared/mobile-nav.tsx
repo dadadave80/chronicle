@@ -14,6 +14,7 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { Link as Spy } from "react-scroll";
 import Logo from "./logo";
 import { MdOutlineArrowOutward } from "react-icons/md";
+import { NavLinks } from "@/utils/navLinkData";
 
 const MobileNav = () => {
   const [year, setYear] = useState("");
@@ -26,50 +27,39 @@ const MobileNav = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <button className="w-[39px] h-[39px] flex justify-center items-center bg-black rounded-[4px] text-gray-100 cursor-pointer border-[1px] border-white/15">
+        <button className="w-[39px] h-[39px] flex justify-center items-center bg-black rounded-[4px] text-gray-100 cursor-pointer">
           <AiOutlineMenu className="w-6 h-6" />
         </button>
       </SheetTrigger>
-      <SheetContent className="w-full bg-gray-200 border-none outline-none">
+      <SheetContent className="w-full bg-gray-100 border-none outline-none">
         <SheetHeader className="w-full pt-8">
-          <Logo classname="w-[160px]" image="/black_logo.png" href="/" />
+          <Logo classname="w-[180px]" image="/white-logo-nobg.png" href="/" />
           <SheetDescription className="text-gray-800 font-nunitoSans pl-2 text-base">
-            Explore EulerPhi, the fintech platform offering stable, appreciating
-            digital assets for Web3 investors.
+            The Future of Supply Chain Transparency
           </SheetDescription>
         </SheetHeader>
         <main className="w-full h-[420px] overflow-y-auto no-scrollbar flex flex-col">
           {/* Navigation Links */}
-          <nav className="w-full mt-4 flex flex-col px-6">
-            <SheetClose asChild>
-              <Spy
-                to="whyStrimz"
-                smooth={true}
-                spy={true}
-                duration={500}
-                className={`capitalize font-poppins text-strimzPrimary font-[500] text-2xl cursor-pointer hover:underline flex items-center gap-2`}
-              >
-                why strimz?
-                <MdOutlineArrowOutward className="w-6 h-6" />
-              </Spy>
-            </SheetClose>
-            <SheetClose asChild>
-              <Spy
-                to="features"
-                smooth={true}
-                spy={true}
-                duration={500}
-                className={`capitalize font-poppins text-strimzPrimary font-[500] text-2xl cursor-pointer hover:underline flex items-center gap-2`}
-              >
-                features
-                <MdOutlineArrowOutward className="w-6 h-6" />
-              </Spy>
-            </SheetClose>
+          <nav className="w-full mt-4 flex flex-col gap-6 px-6">
+            {NavLinks.map((link, index) => (
+              <SheetClose asChild key={index}>
+                <Spy
+                  to={link.to}
+                  smooth={true}
+                  spy={true}
+                  duration={500}
+                  className={`capitalize font-ibm text-gray-900 font-[500] text-2xl cursor-pointer hover:underline flex items-center gap-2`}
+                >
+                  {link.name}
+                  <MdOutlineArrowOutward className="w-6 h-6" />
+                </Spy>
+              </SheetClose>
+            ))}
           </nav>
         </main>
         <SheetFooter>
           <p className=" text-gray-900 text-center font-nunitoSans text-xs">
-            &copy; {year} EulerPhi. All rights reserved.
+            &copy; {year} Chronify. All rights reserved.
           </p>
         </SheetFooter>
       </SheetContent>

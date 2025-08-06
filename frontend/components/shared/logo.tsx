@@ -17,8 +17,8 @@ const Logo = ({
         src={image}
         alt="Logo"
         className={`w-full`}
-        width={131}
-        height={25}
+        width={800}
+        height={252}
         priority
         quality={100}
       />

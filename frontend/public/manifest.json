@@ -1,7 +1,7 @@
 {
-  "name": "Chronify",
+  "name": "Chronify: The Future of Supply Chain Transparency",
   "short_name": "Chronify",
-  "description": "Chronify is a fintech platform offering stable, appreciating digital assets for Web3 investors. We provide a safe haven from market volatility with bond-like tokens and a multi-collateral stablecoin, ensuring predictable returns and capital preservation.",
+  "description": "Chronify leverages the power of Hedera and the modular EIP-2535 Diamond Standard to deliver an unparalleled, secure, and scalable supply chain solution. Track products from origin to consumer with verifiable trust and efficiency.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FFFFFF",
