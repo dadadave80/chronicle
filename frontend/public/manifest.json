@@ -1,0 +1,24 @@
+{
+  "name": "Chronify",
+  "short_name": "Chronify",
+  "description": "Chronify is a fintech platform offering stable, appreciating digital assets for Web3 investors. We provide a safe haven from market volatility with bond-like tokens and a multi-collateral stablecoin, ensuring predictable returns and capital preservation.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#000000",
+  "iconPath": "/favicon-32x32.png",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
