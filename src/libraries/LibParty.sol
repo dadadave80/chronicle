@@ -34,6 +34,12 @@ library LibParty {
         emit PartyDeactivated($.parties[sender]);
     }
 
+    function _freezeParty(address _addr) internal {
+        _partyStorage().parties[_addr].frozen = true;
+    }
+
+    function _unFreezeParty(address _addr) internal {
+        _partyStorage().parties[_addr].frozen = false;
     }
 
     function _hasRole(Role _role) internal view returns (bool) {
