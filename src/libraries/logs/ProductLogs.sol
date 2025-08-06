@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Status, Product} from "@chainsight-types/ProductStorage.sol";
+import {Status, Product} from "@chronicle-types/ProductStorage.sol";
 
 event ProductCreated(address indexed tokenAddress, address indexed owner, Product product);
 
