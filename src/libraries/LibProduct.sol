@@ -144,19 +144,19 @@ library LibProduct {
         });
     }
 
-    function _getProduct(address _tokenAddress) internal view returns (Product memory) {
+    function _getProductByTokenAddress(address _tokenAddress) internal view returns (Product memory) {
         return _productStorage().tokenToProduct[_tokenAddress];
     }
 
-    function _getProductTokenAddresses() internal view returns (address[] memory) {
+    function _getAllProductTokenAddresses() internal view returns (address[] memory) {
         return _productStorage().activeProducts.values();
     }
 
-    function _getProducts() internal view returns (Product[] memory products_) {
-        address[] memory tokenAddresses = _getProductTokenAddresses();
+    function _getAllProducts() internal view returns (Product[] memory products_) {
+        address[] memory tokenAddresses = _getAllProductTokenAddresses();
         products_ = new Product[](tokenAddresses.length);
         for (uint256 i; i < tokenAddresses.length; ++i) {
-            products_[i] = _getProduct(tokenAddresses[i]);
+            products_[i] = _getProductByTokenAddress(tokenAddresses[i]);
         }
     }
 

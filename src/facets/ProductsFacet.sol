@@ -11,15 +11,15 @@ contract ProductsFacet {
         _name._createProduct(_price, _initialSupply);
     }
 
-    function getProduct(address _tokenAddress) public view returns (Product memory) {
-        return _tokenAddress._getProduct();
+    function getProductByTokenAddress(address _tokenAddress) public view returns (Product memory) {
+        return _tokenAddress._getProductByTokenAddress();
     }
 
-    function getProductTokenAddresses() public view returns (address[] memory) {
-        return LibProduct._getProductTokenAddresses();
+    function getAllProductTokenAddresses() public view returns (address[] memory) {
+        return LibProduct._getAllProductTokenAddresses();
     }
 
-    function getProducts() public view returns (Product[] memory) {
-        return LibProduct._getProducts();
+    function getAllProducts() public view returns (Product[] memory) {
+        return LibProduct._getAllProducts();
     }
 }
