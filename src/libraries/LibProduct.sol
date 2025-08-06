@@ -43,19 +43,20 @@ library LibProduct {
 
         (int256 responseCode, address tokenAddress) = LibHederaTokenService.createNonFungibleToken(token);
         if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");
-        if (tokenAddress != address(0)) {
-            _productStorage().activeProducts.add(tokenAddress);
-            _productStorage().products[tokenAddress].push(
-                Product({
-                    tokenAddress: tokenAddress,
-                    name: _name,
-                    price: _price,
-                    owner: sender,
-                    status: Status.Created,
-                    timestamp: block.timestamp
-                })
-            );
-        }
+        if (tokenAddress == address(0)) revert("Invalid token address");
+
+        ProductStorage storage $ = _productStorage();
+        $.activeProducts.add(tokenAddress);
+        $.products[sender].push(
+            Product({
+                tokenAddress: tokenAddress,
+                name: _name,
+                price: _price,
+                owner: sender,
+                status: Status.Created,
+                timestamp: block.timestamp
+            })
+        );
         emit ProductCreated(tokenAddress, sender);
     }
 
