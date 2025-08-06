@@ -55,7 +55,7 @@ library LibProduct {
             timestamp: uint32(block.timestamp),
             serialNumbers: serialNumbers
         });
-        $.products[sender].push(product);
+        $.tokenToProduct[tokenAddress] = product;
 
         emit ProductCreated(product);
     }
