@@ -16,10 +16,15 @@ import {LibKeyHelper} from "@chainsight/libraries/hts/LibKeyHelper.sol";
 import "@chainsight-logs/ProductLogs.sol";
 
 library LibProduct {
-    using EnumerableSet for EnumerableSet.AddressSet;
     using LibParty for address;
     using LibKeyHelper for KeyType;
     using LibHederaTokenService for IHederaTokenService.HederaToken;
+    using EnumerableSet for EnumerableSet.AddressSet;
+
+    // TODO: initialize with diamond
+    // constructor() {
+    //     _productStorage().usdcAddress = address(0x0000000000000000000000000000000000068cda);
+    // }
 
     function _productStorage() internal pure returns (ProductStorage storage pds_) {
         assembly {
