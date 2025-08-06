@@ -34,17 +34,12 @@ library LibProduct {
         address sender = LibContext._msgSender();
         if (!sender._isActiveRole(Role.Supplier)) revert("Not a Supplier");
 
-        (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.RoyaltyFee[] memory royaltyFees) =
-            _getProductFees(_price);
-        (int256 createResponseCode, address tokenAddress) =
-            _getProductToken(_name).createNonFungibleTokenWithCustomFees(fixedFees, royaltyFees);
-
+        (int256 createResponseCode, address tokenAddress) = _createProductToken(_name, _price);
         if (createResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");
         if (tokenAddress == address(0)) revert("Invalid token address");
 
-        bytes[] memory metadata = new bytes[](0);
         (int256 mintResponseCode, int64 newTotalSupply, int64[] memory serialNumbers) =
-            tokenAddress.mintToken(_initialSupply, metadata);
+            _mintProductToken(tokenAddress, _initialSupply);
         if (mintResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to mint product");
 
         ProductStorage storage $ = _productStorage();
@@ -63,6 +58,24 @@ library LibProduct {
         $.products[sender].push(product);
 
         emit ProductCreated(tokenAddress, sender, product);
+    }
+
+    function _createProductToken(string calldata _name, int64 _price)
+        internal
+        returns (int256 createResponseCode_, address tokenAddress_)
+    {
+        (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.RoyaltyFee[] memory royaltyFees) =
+            _getProductFees(_price);
+        (createResponseCode_, tokenAddress_) =
+            _getProductToken(_name).createNonFungibleTokenWithCustomFees(fixedFees, royaltyFees);
+    }
+
+    function _mintProductToken(address _tokenAddress, int64 _initialSupply)
+        internal
+        returns (int256 mintResponseCode_, int64 newTotalSupply_, int64[] memory serialNumbers_)
+    {
+        bytes[] memory metadata = new bytes[](0);
+        (mintResponseCode_, newTotalSupply_, serialNumbers_) = _tokenAddress.mintToken(_initialSupply, metadata);
     }
 
     function _getProductToken(string calldata _name)
