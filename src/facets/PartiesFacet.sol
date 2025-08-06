@@ -21,8 +21,6 @@ contract PartiesFacet {
         _role._deactivateParty();
     }
 
-    function getAllActiveParties() public view returns (address[] memory) {
-        return LibParty._getActiveParties();
     function freezeParty(address _addr) external onlyOwnerOrPartyAdmin {
         _addr._freezeParty();
     }
@@ -31,21 +29,27 @@ contract PartiesFacet {
         _addr._unFreezeParty();
     }
 
-    function getPartiesByRole(Role _role) public view returns (address[] memory) {
-        return _role._getPartiesByRole();
     function hasActiveRole(address _addr, Role _role) public view returns (bool) {
         return _addr._hasActiveRole(_role);
     }
 
-    function getSuppliers() public view returns (address[] memory) {
-        return LibParty._getSuppliers();
+    function getParty(address _addr) public view returns (Party memory) {
+        return _addr._getParty();
     }
 
-    function getTransporters() public view returns (address[] memory) {
-        return LibParty._getTransporters();
+    function getActiveParties() public view returns (Party[] memory) {
+        return LibParty._getActiveParties();
     }
 
-    function getRetailers() public view returns (address[] memory) {
-        return LibParty._getRetailers();
+    function getActivePartiesByRole(Role _role) public view returns (Party[] memory) {
+        return _role._getActivePartiesByRole();
+    }
+
+    function getActivePartiesAddress() public view returns (address[] memory) {
+        return LibParty._getActivePartiesAddress();
+    }
+
+    function getActivePartiesAddressByRole(Role _role) public view returns (address[] memory) {
+        return _role._getActivePartiesAddressByRole();
     }
 }
