@@ -22,4 +22,12 @@ contract ProductsFacet {
     function getAllProducts() public view returns (Product[] memory) {
         return LibProduct._getAllProducts();
     }
+
+    function getOwnerProductTokenAddresses(address _owner) public view returns (address[] memory) {
+        return _owner._getOwnerProductTokenAddresses();
+    }
+
+    function getOwnerProducts(address _owner) public view returns (Product[] memory) {
+        return _owner._getOwnerProducts();
+    }
 }
