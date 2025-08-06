@@ -25,7 +25,9 @@ struct Product {
     address tokenAddress;
     string name;
     int64 price;
+    int64 totalSupply;
     address owner;
     Status status;
     uint32 timestamp;
+    int64[] serialNumbers;
 }

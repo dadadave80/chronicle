@@ -57,9 +57,11 @@ library LibProduct {
             tokenAddress: tokenAddress,
             name: _name,
             price: _price,
+            totalSupply: newTotalSupply,
             owner: sender,
             status: Status.Created,
-            timestamp: uint32(block.timestamp)
+            timestamp: uint32(block.timestamp),
+            serialNumbers: serialNumbers
         });
         $.products[sender].push(product);
 
