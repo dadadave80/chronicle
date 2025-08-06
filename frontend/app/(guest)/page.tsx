@@ -1,3 +1,4 @@
+import Features from "@/components/guest/features";
 import HeroSection from "@/components/guest/hero-section";
 import WhyChronify from "@/components/guest/why-chronify";
 
@@ -8,6 +9,8 @@ export default function Home() {
       <HeroSection />
       {/* Why Chronify */}
       <WhyChronify />
+      {/* Features */}
+      <Features />
     </main>
   );
 }
