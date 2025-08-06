@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Role} from "@chronicle-types/PartyStorage.sol";
+import {Role, Party, PARTY_ADMIN_ROLE} from "@chronicle-types/PartyStorage.sol";
 import {LibParty} from "@chronicle/libraries/LibParty.sol";
 
 contract PartiesFacet {
