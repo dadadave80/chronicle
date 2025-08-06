@@ -21,6 +21,12 @@ contract PartiesFacet {
 
     function getAllActiveParties() public view returns (address[] memory) {
         return LibParty._getActiveParties();
+    function freezeParty(address _addr) external onlyOwnerOrPartyAdmin {
+        _addr._freezeParty();
+    }
+
+    function unfreezeParty(address _addr) external onlyOwnerOrPartyAdmin {
+        _addr._unFreezeParty();
     }
 
     function getPartiesByRole(Role _role) public view returns (address[] memory) {
