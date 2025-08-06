@@ -46,7 +46,6 @@ library LibProduct {
 
         ProductStorage storage $ = _productStorage();
         $.activeProducts.add(tokenAddress);
-        emit ProductCreated(tokenAddress, sender);
         Product memory product = Product({
             id: uint24($.activeProducts.length()),
             tokenAddress: tokenAddress,
@@ -58,6 +57,7 @@ library LibProduct {
         });
         $.products[sender].push(product);
 
+        emit ProductCreated(tokenAddress, sender, product);
     }
 
     function _getProductToken(string calldata _name)
