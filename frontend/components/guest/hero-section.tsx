@@ -2,7 +2,7 @@ import { RetroGrid } from "../magicui/retro-grid";
 
 const HeroSection = () => {
   return (
-    <section className="w-full h-[100dvh] md:h-[calc(100dvh-110px)] bg-white relative overflow-hidden">
+    <section className="w-full h-[100dvh] md:h-[100dvh] bg-white relative overflow-hidden">
       {/* Container for your main text content, centered */}
       <div className="flex flex-col items-center justify-center w-full h-full px-4 lg:px-0">
         <h1 className="text-5xl md:text-6xl lg:text-8xl tracking-tighter capitalize font-ibm font-extrabold text-center text-[#000000E5] max-w-[1200px]">
