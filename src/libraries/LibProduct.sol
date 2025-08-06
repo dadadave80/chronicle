@@ -105,8 +105,6 @@ library LibProduct {
         view
         returns (IHederaTokenService.FixedFee[] memory fixedFees_, IHederaTokenService.RoyaltyFee[] memory royaltyFees_)
     {
-        address usdcAddress = _productStorage().usdcAddress;
-
         fixedFees_ = new IHederaTokenService.FixedFee[](1);
         fixedFees_[0] = IHederaTokenService.FixedFee({
             amount: _price,
