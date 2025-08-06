@@ -19,6 +19,7 @@ library LibProduct {
     using LibParty for address;
     using LibKeyHelper for KeyType;
     using LibHederaTokenService for IHederaTokenService.HederaToken;
+    using LibHederaTokenService for address;
     using EnumerableSet for EnumerableSet.AddressSet;
 
     // TODO: initialize with diamond
@@ -32,17 +33,22 @@ library LibProduct {
         }
     }
 
-    function _createProduct(string calldata _name, int64 _price) internal {
+    function _createProduct(string calldata _name, int64 _price, int64 _initialSupply) internal {
         address sender = LibContext._msgSender();
         if (!sender._isActiveRole(Role.Supplier)) revert("Not a Supplier");
 
         (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.RoyaltyFee[] memory royaltyFees) =
             _getProductFees(_price);
-        (int256 responseCode, address tokenAddress) =
+        (int256 createResponseCode, address tokenAddress) =
             _getProductToken(_name).createNonFungibleTokenWithCustomFees(fixedFees, royaltyFees);
 
-        if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");
+        if (createResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");
         if (tokenAddress == address(0)) revert("Invalid token address");
+
+        bytes[] memory metadata = new bytes[](0);
+        (int256 mintResponseCode, int64 newTotalSupply, int64[] memory serialNumbers) =
+            tokenAddress.mintToken(_initialSupply, metadata);
+        if (mintResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to mint product");
 
         ProductStorage storage $ = _productStorage();
         $.activeProducts.add(tokenAddress);
