@@ -23,11 +23,11 @@ contract ProductsFacet {
         return LibProduct._getAllProducts();
     }
 
-    function getOwnerProductTokenAddresses(address _owner) public view returns (address[] memory) {
-        return _owner._getOwnerProductTokenAddresses();
+    function getSupplierProductTokenAddresses(address _owner) public view returns (address[] memory) {
+        return _owner._getSupplierProductTokenAddresses();
     }
 
-    function getOwnerProducts(address _owner) public view returns (Product[] memory) {
-        return _owner._getOwnerProducts();
+    function getSupplierProducts(address _owner) public view returns (Product[] memory) {
+        return _owner._getSupplierProducts();
     }
 }

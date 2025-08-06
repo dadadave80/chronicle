@@ -56,7 +56,7 @@ library LibProduct {
             serialNumbers: serialNumbers
         });
         $.tokenToProduct[tokenAddress] = product;
-        $.ownerToProducts[sender].add(tokenAddress);
+        $.supplierToProducts[sender].add(tokenAddress);
 
         emit ProductCreated(product);
     }
@@ -161,12 +161,12 @@ library LibProduct {
         }
     }
 
-    function _getOwnerProductTokenAddresses(address _owner) internal view returns (address[] memory) {
-        return _productStorage().ownerToProducts[_owner].values();
+    function _getSupplierProductTokenAddresses(address _owner) internal view returns (address[] memory) {
+        return _productStorage().supplierToProducts[_owner].values();
     }
 
-    function _getOwnerProducts(address _owner) internal view returns (Product[] memory products_) {
-        address[] memory tokenAddresses = _getOwnerProductTokenAddresses(_owner);
+    function _getSupplierProducts(address _owner) internal view returns (Product[] memory products_) {
+        address[] memory tokenAddresses = _getSupplierProductTokenAddresses(_owner);
         products_ = new Product[](tokenAddresses.length);
         for (uint256 i; i < tokenAddresses.length; ++i) {
             products_[i] = _getProductByTokenAddress(tokenAddresses[i]);
