@@ -3,9 +3,15 @@ pragma solidity ^0.8.0;
 
 import {Role, Party, PARTY_ADMIN_ROLE} from "@chronicle-types/PartyStorage.sol";
 import {LibParty} from "@chronicle/libraries/LibParty.sol";
+import {LibOwnableRoles} from "@diamond/libraries/LibOwnableRoles.sol";
 
 contract PartiesFacet {
     using LibParty for *;
+
+    modifier onlyOwnerOrPartyAdmin() {
+        LibOwnableRoles._checkOwnerOrRoles(PARTY_ADMIN_ROLE);
+        _;
+    }
 
     function registerParty(string calldata _name, Role _role) external {
         _name._registerParty(_role);
