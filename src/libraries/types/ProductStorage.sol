@@ -7,6 +7,7 @@ import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet
 bytes32 constant PRODUCT_STORAGE_SLOT = 0x3e8839e7c5f19510f7ec9b47b1276a08315ec604640593841cc770aa20d30d00;
 
 struct ProductStorage {
+    address usdcAddress;
     mapping(address => Product[]) products;
     EnumerableSet.AddressSet activeProducts;
 }
