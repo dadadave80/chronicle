@@ -25,11 +25,13 @@ library LibParty {
         emit PartyRegistered($.parties[sender]);
     }
 
+    function _deactivateParty(Role _role) internal {
         PartyStorage storage $ = _partyStorage();
         address sender = LibContext._msgSender();
-        $.parties[sender].active = false;
-        $.activeParties.remove(sender);
-        emit PartyDeactivated(sender);
+        if (!$.activeParties.remove(sender)) revert("Party not active");
+        if (!$.roles[_role].remove(sender)) revert("Role not found");
+        if ($.parties[sender].active) $.parties[sender].active = false;
+        emit PartyDeactivated($.parties[sender]);
     }
 
     }
