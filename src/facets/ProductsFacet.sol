@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Status, Product} from "@chainsight-types/ProductStorage.sol";
-import {Role} from "@chainsight-types/PartyStorage.sol";
+import {LibProduct} from "@chainsight/libraries/LibProduct.sol";
 
-contract ProductsFacet {}
+contract ProductsFacet {
+    using LibProduct for *;
+
+    function createProduct(string calldata _name, int64 _price, int64 _initialSupply) external {
+        _name._createProduct(_price, _initialSupply);
+    }
+}
