@@ -17,6 +17,8 @@ contract PartiesFacet {
         _name._registerParty(_role);
     }
 
+    function deactivateParty(Role _role) external {
+        _role._deactivateParty();
     }
 
     function getAllActiveParties() public view returns (address[] memory) {
