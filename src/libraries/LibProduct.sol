@@ -27,29 +27,32 @@ library LibProduct {
         }
     }
 
-    function _createProduct(string calldata _name, uint256 _price) internal {
+    function _createProduct(string calldata _name, int64 _price) internal {
         address sender = LibContext._msgSender();
         if (!sender._isActiveRole(Role.Supplier)) revert("Not a Supplier");
 
-        (int256 responseCode, address tokenAddress) = _getProductToken(_name).createNonFungibleToken();
+        (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.RoyaltyFee[] memory royaltyFees) =
+            _getProductFees(_price);
+        (int256 responseCode, address tokenAddress) =
+            _getProductToken(_name).createNonFungibleTokenWithCustomFees(fixedFees, royaltyFees);
 
         if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");
         if (tokenAddress == address(0)) revert("Invalid token address");
 
         ProductStorage storage $ = _productStorage();
         $.activeProducts.add(tokenAddress);
-        $.products[sender].push(
-            Product({
-                tokenAddress: tokenAddress,
-                name: _name,
-                price: _price,
-                owner: sender,
-                status: Status.Created,
-                timestamp: block.timestamp
-            })
-        );
-
         emit ProductCreated(tokenAddress, sender);
+        Product memory product = Product({
+            id: uint24($.activeProducts.length()),
+            tokenAddress: tokenAddress,
+            name: _name,
+            price: _price,
+            owner: sender,
+            status: Status.Created,
+            timestamp: uint32(block.timestamp)
+        });
+        $.products[sender].push(product);
+
     }
 
     function _getProductToken(string calldata _name)
