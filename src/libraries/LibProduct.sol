@@ -27,22 +27,10 @@ library LibProduct {
     function _createProduct(string calldata _name, uint256 _price) internal {
         address sender = LibContext._msgSender();
         if (!LibParty._isActiveRole(sender, Role.Supplier)) revert("Not a Supplier");
-        IHederaTokenService.KeyValue memory key = IHederaTokenService.KeyValue({
-            inheritAccountKey: true,
-            contractId: address(0),
-            ed25519: "",
-            ECDSA_secp256k1: "",
-            delegatableContractId: address(0)
-        });
-        IHederaTokenService.TokenKey[] memory tokenKeys = new IHederaTokenService.TokenKey[](1);
-        tokenKeys[0] = IHederaTokenService.TokenKey({keyType: 0, key: key});
-        IHederaTokenService.HederaToken memory token;
-        token.name = _name;
-        token.symbol = "CSP";
-        token.treasury = address(this);
-        token.tokenKeys = tokenKeys;
 
-        (int256 responseCode, address tokenAddress) = LibHederaTokenService.createNonFungibleToken(token);
+        (int256 responseCode, address tokenAddress) =
+            LibHederaTokenService.createNonFungibleToken(_getProductToken(_name));
+
         if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");
         if (tokenAddress == address(0)) revert("Invalid token address");
 
@@ -58,6 +46,7 @@ library LibProduct {
                 timestamp: block.timestamp
             })
         );
+
         emit ProductCreated(tokenAddress, sender);
     }
 
