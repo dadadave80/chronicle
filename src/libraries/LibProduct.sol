@@ -55,10 +55,30 @@ library LibProduct {
             timestamp: uint32(block.timestamp),
             serialNumbers: serialNumbers
         });
-        $.products[sender].push(product);
+        $.tokenToProduct[tokenAddress] = product;
+        $.supplierToProducts[sender].add(tokenAddress);
 
-        emit ProductCreated(tokenAddress, sender, product);
+        emit ProductCreated(product);
     }
+
+    // TODO: implement
+    // function _updateProduct(address _tokenAddress, Product memory _product) internal {
+    //     ProductStorage storage $ = _productStorage();
+    //     if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
+    //     if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
+    //     $.tokenToProduct[_tokenAddress] = _product;
+    // }
+
+    // function _updateProductTokenInfo(address _tokenAddress, IHederaTokenService.HederaToken memory tokenInfo)
+    //     internal
+    // {
+    //     address sender = LibContext._msgSender();
+    //     ProductStorage storage $ = _productStorage();
+    //     if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
+    //     if ($.tokenToProduct[_tokenAddress].owner != sender) revert("Not the owner");
+    //     int256 responseCode = _tokenAddress.updateTokenInfo(tokenInfo);
+    //     if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to update product token info");
+    // }
 
     function _createProductToken(string calldata _name, int64 _price)
         internal
@@ -125,18 +145,31 @@ library LibProduct {
         });
     }
 
-    // function _transferProduct(uint256 _id, address _to, Status _newStatus) internal {
+    function _getProductByTokenAddress(address _tokenAddress) internal view returns (Product memory) {
+        return _productStorage().tokenToProduct[_tokenAddress];
+    }
 
-    //     emit ProductTransferred(_id, msg.sender, _to, _newStatus);
-    // }
+    function _getAllProductTokenAddresses() internal view returns (address[] memory) {
+        return _productStorage().activeProducts.values();
+    }
 
-    // function getHistory(uint256 _id) external view returns (ProductHistory[] memory) {
-    //     return history[_id];
-    // }
+    function _getAllProducts() internal view returns (Product[] memory products_) {
+        address[] memory tokenAddresses = _getAllProductTokenAddresses();
+        products_ = new Product[](tokenAddresses.length);
+        for (uint256 i; i < tokenAddresses.length; ++i) {
+            products_[i] = _getProductByTokenAddress(tokenAddresses[i]);
+        }
+    }
 
-    // function _getProductsByOwner(address _owner) internal view returns (Product[] memory) {
-    //     // iterate stored products (or maintain owner → products index mapping)
-    //     // for brevity, not fully implemented here
-    //     revert("Not implemented");
-    // }
+    function _getSupplierProductTokenAddresses(address _owner) internal view returns (address[] memory) {
+        return _productStorage().supplierToProducts[_owner].values();
+    }
+
+    function _getSupplierProducts(address _owner) internal view returns (Product[] memory products_) {
+        address[] memory tokenAddresses = _getSupplierProductTokenAddresses(_owner);
+        products_ = new Product[](tokenAddresses.length);
+        for (uint256 i; i < tokenAddresses.length; ++i) {
+            products_[i] = _getProductByTokenAddress(tokenAddresses[i]);
+        }
+    }
 }
