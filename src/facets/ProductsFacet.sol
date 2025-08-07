@@ -7,8 +7,8 @@ import {Product} from "@chronicle-types/ProductStorage.sol";
 contract ProductsFacet {
     using LibProduct for *;
 
-    function createProduct(string calldata _name, int64 _price, int64 _initialSupply) external {
-        _name._createProduct(_price, _initialSupply);
+    function createProduct(string calldata _name, string calldata _memo, int64 _price, int64 _initialSupply) external {
+        _name._createProduct(_memo, _price, _initialSupply);
     }
 
     function getProductByTokenAddress(address _tokenAddress) public view returns (Product memory) {

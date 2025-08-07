@@ -21,14 +21,8 @@ library LibParty {
         if ($.parties[sender].frozen) revert("Party frozen");
         if (!$.roles[_role].add(sender)) revert("Role already exists");
         if (!$.activeParties.add(sender)) revert("Party already exists");
-        Party memory party = Party({
-            name: _name,
-            addr: sender,
-            role: _role,
-            active: true,
-            frozen: false,
-            rating: Rating.Zero
-        });
+        Party memory party =
+            Party({name: _name, addr: sender, role: _role, active: true, frozen: false, rating: Rating.Zero});
         $.parties[sender] = party;
         emit PartyRegistered(party);
     }
