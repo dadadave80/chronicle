@@ -25,3 +25,9 @@ export type RegisterInputValues = {
   name: string;
   role: string;
 };
+
+export type SideBarLinksTypes = {
+  href: string;
+  title: string;
+  icon: ReactNode;
+};

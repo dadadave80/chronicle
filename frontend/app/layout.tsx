@@ -1,6 +1,9 @@
 import { IBM_Plex_Mono, Nunito_Sans, Marcellus } from "next/font/google";
 import "@/styles/globals.css";
 import { getMetadata } from "@/utils/getMetadata";
+import ContextProvider from "@/context";
+import { headers } from "next/headers";
+import { Toaster } from "sonner";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -25,17 +28,21 @@ export const metadata = getMetadata({
     "Chronify leverages the power of Hedera and the modular EIP-2535 Diamond Standard to deliver an unparalleled, secure, and scalable supply chain solution. Track products from origin to consumer with verifiable trust and efficiency.",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersObj = await headers();
+  const cookies = headersObj.get("cookie");
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${nunitoSans.variable} ${marcellus.variable} ${ibmplexmono.variable} antialiased bg-white`}
       >
-        {children}
+        <ContextProvider cookies={cookies}>{children}</ContextProvider>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

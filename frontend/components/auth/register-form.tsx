@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import Logo from "../shared/logo";
-import * as Yup from "yup";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { RegisterInputValues } from "@/types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import ErrorDisplay from "../shared/error-msg";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import {
@@ -16,6 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+
+const registerSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  role: z.enum(["Supplier", "Transporter", "Retailer"], {
+    errorMap: () => ({ message: "Role is required" }),
+  }),
+});
+
+type RegisterFormData = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
   return (
@@ -28,12 +36,7 @@ const RegisterForm = () => {
             image="/white-logo-nobg.png"
           />
         </div>
-        <button
-          type="button"
-          className="md:w-[160px] w-[130px] md:h-[45px] h-[40px] flex justify-center items-center bg-[#000000E5] rounded-[8px] cursor-pointer md:text-base text-[14px] font-[500] font-nunitoSans text-white"
-        >
-          Connect Wallet
-        </button>
+        <appkit-button />
       </header>
 
       <div className="shadow-authCardShadow md:w-[450px] w-full rounded-[16px] bg-white border border-[#E5E7EB] flex flex-col items-center py-8 px-6">
@@ -54,27 +57,28 @@ const FormInputs = () => {
 
   const router = useRouter();
 
-  //initial form values
-  const initialValues: RegisterInputValues = {
-    name: "",
-    role: "",
-  };
-
-  const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required"),
-    role: Yup.string()
-      .required("Role is required")
-      .oneOf(["Supplier", "Transporter", "Retailer"], "Invalid role selected"),
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isDirty },
+    setValue,
+    watch,
+    trigger,
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      role: undefined,
+    },
+    mode: "onChange",
   });
 
-  const onSubmit = async (
-    values: RegisterInputValues,
-    { resetForm }: FormikHelpers<RegisterInputValues>,
-  ) => {
+  const watchedRole = watch("role");
+
+  const onSubmit = async (data: RegisterFormData) => {
     setIsSending(true);
     try {
-      console.log(values);
-      resetForm();
+      console.log(data);
       router.push("/dashboard");
     } catch (error) {
       setIsSending(false);
@@ -82,109 +86,84 @@ const FormInputs = () => {
     }
   };
 
+  const handleRoleChange = (value: string) => {
+    setValue("role", value as "Supplier" | "Transporter" | "Retailer", {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+    trigger("role");
+  };
+
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
-      validateOnChange={true}
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="w-full flex flex-col gap-4 mt-6"
     >
-      {(formik) => {
-        const { dirty, isValid, errors, touched } = formik;
-        return (
-          <Form className="w-full flex flex-col gap-4 mt-6">
-            {/* Name Field */}
-            <div className="w-full flex flex-col">
-              <label
-                htmlFor="name"
-                className="font-nunitoSans font-medium text-base md:text-lg text-[#58556A] mb-1"
-              >
-                Enter Your Name
-              </label>
+      {/* Name Field */}
+      <div className="w-full flex flex-col">
+        <label
+          htmlFor="name"
+          className="font-nunitoSans font-medium text-base md:text-lg text-[#58556A] mb-1"
+        >
+          Enter Your Name
+        </label>
 
-              <Field
-                type="text"
-                name="name"
-                id="name"
-                placeholder="Adams"
-                className={`w-full rounded-[8px] border bg-[#F9FAFB] h-[48px] font-nunitoSans text-base placeholder:text-base placeholder:text-[#8E8C9C] text-[#333] px-4 outline-none transition duration-300 ${
-                  errors.name && touched.name
-                    ? "border-red-500"
-                    : "border-[#E5E7EB]"
-                }`}
-              />
+        <input
+          {...register("name")}
+          type="text"
+          id="name"
+          placeholder="Adams"
+          className={`w-full rounded-[8px] border bg-[#F9FAFB] h-[48px] font-nunitoSans text-base placeholder:text-base placeholder:text-[#8E8C9C] text-[#333] px-4 outline-none transition duration-300 ${
+            errors.name ? "border-red-500" : "border-[#E5E7EB]"
+          }`}
+        />
 
-              <ErrorMessage
-                name="name"
-                component={({ children }: any) => (
-                  <ErrorDisplay message={children} />
-                )}
-              />
-            </div>
+        {errors.name && <ErrorDisplay message={errors.name.message || ""} />}
+      </div>
 
-            {/* Role Field */}
-            <div className="w-full flex flex-col">
-              <label
-                htmlFor="role"
-                className="font-nunitoSans font-medium text-base md:text-lg text-[#58556A] mb-1"
-              >
-                Choose Your Role
-              </label>
+      {/* Role Field */}
+      <div className="w-full flex flex-col">
+        <label
+          htmlFor="role"
+          className="font-nunitoSans font-medium text-base md:text-lg text-[#58556A] mb-1"
+        >
+          Choose Your Role
+        </label>
 
-              <Field name="role">
-                {({ field, form, meta }: any) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={(value) => {
-                      form.setFieldValue("role", value);
-                      form.setFieldTouched("role", true);
-                    }}
-                  >
-                    <SelectTrigger
-                      id="role"
-                      className={`w-full rounded-[8px] border bg-[#F9FAFB] shadow-navbarShadow h-[48px] font-marcellus text-base px-4 outline-none transition duration-300 ${
-                        meta.error && meta.touched
-                          ? "border-red-500"
-                          : "border-[#E5E7EB]"
-                      } ${field.value ? "text-[#333]" : "text-[#8E8C9C]"}`}
-                    >
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Supplier">Supplier</SelectItem>
-                      <SelectItem value="Transporter">Transporter</SelectItem>
-                      <SelectItem value="Retailer">Retailer</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              </Field>
+        <Select value={watchedRole || ""} onValueChange={handleRoleChange}>
+          <SelectTrigger
+            className={`w-full rounded-[8px] border bg-[#F9FAFB] h-[48px] font-nunitoSans text-base px-4 outline-none transition duration-300 ${
+              errors.role ? "border-red-500" : "border-[#E5E7EB]"
+            } ${watchedRole ? "text-[#333]" : "text-[#8E8C9C]"}`}
+          >
+            <SelectValue placeholder="Select a role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Supplier">Supplier</SelectItem>
+            <SelectItem value="Transporter">Transporter</SelectItem>
+            <SelectItem value="Retailer">Retailer</SelectItem>
+          </SelectContent>
+        </Select>
 
-              <ErrorMessage
-                name="role"
-                component={({ children }: any) => (
-                  <ErrorDisplay message={children} />
-                )}
-              />
-            </div>
+        {errors.role && <ErrorDisplay message={errors.role.message || ""} />}
+      </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={!(dirty && isValid) || isSending}
-              className="w-full h-[48px] mt-6 flex justify-center items-center rounded-[8px] bg-black text-gray-100 font-nunitoSans font-[600] text-[16px] disabled:opacity-80 disabled:cursor-not-allowed transition-opacity duration-200"
-            >
-              {isSending ? (
-                <span className="flex items-center text-gray-200 gap-2">
-                  <AiOutlineLoading3Quarters className="animate-spin text-gray-200" />
-                  Submitting...
-                </span>
-              ) : (
-                <span>Create Account</span>
-              )}
-            </button>
-          </Form>
-        );
-      }}
-    </Formik>
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={!(isDirty && isValid) || isSending}
+        className="w-full h-[48px] mt-6 flex justify-center items-center rounded-[8px] bg-black text-gray-100 font-nunitoSans font-[600] text-[16px] disabled:opacity-80 disabled:cursor-not-allowed transition-opacity duration-200"
+      >
+        {isSending ? (
+          <span className="flex items-center text-gray-200 gap-2">
+            <AiOutlineLoading3Quarters className="animate-spin text-gray-200" />
+            Submitting...
+          </span>
+        ) : (
+          <span>Create Account</span>
+        )}
+      </button>
+    </form>
   );
 };

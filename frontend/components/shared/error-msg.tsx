@@ -9,7 +9,7 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ message }) => {
   return (
     <div className="flex gap-1 items-center ml-3 mt-1 text-red-600">
       <IoWarningOutline className="w-4 h-4" />
-      <span className="text-[14px]">{message}</span>
+      <span className="text-[13px] font-nunitoSans">{message}</span>
     </div>
   );
 };
