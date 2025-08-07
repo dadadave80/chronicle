@@ -22,19 +22,19 @@ library LibProduct {
     using LibHederaTokenService for address;
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    address constant usdcAddress = address(0x0000000000000000000000000000000000068cDa);
-
     function _productStorage() internal pure returns (ProductStorage storage pds_) {
         assembly {
             pds_.slot := PRODUCT_STORAGE_SLOT
         }
     }
 
-    function _createProduct(string calldata _name, int64 _price, int64 _initialSupply) internal {
+    function _createProduct(string calldata _name, string calldata _memo, int64 _price, int64 _initialSupply)
+        internal
+    {
         address sender = LibContext._msgSender();
         if (!sender._hasActiveRole(Role.Supplier)) revert("Not a Supplier");
 
-        (int256 createResponseCode, address tokenAddress) = _createProductToken(_name, _price);
+        (int256 createResponseCode, address tokenAddress) = _createProductToken(_name, _memo, _price);
         if (createResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");
         if (tokenAddress == address(0)) revert("Invalid token address");
 
@@ -80,14 +80,14 @@ library LibProduct {
     //     if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to update product token info");
     // }
 
-    function _createProductToken(string calldata _name, int64 _price)
+    function _createProductToken(string calldata _name, string calldata _memo, int64 _price)
         internal
         returns (int256 createResponseCode_, address tokenAddress_)
     {
         (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.RoyaltyFee[] memory royaltyFees) =
             _getProductFees(_price);
         (createResponseCode_, tokenAddress_) =
-            _getProductToken(_name).createNonFungibleTokenWithCustomFees(fixedFees, royaltyFees);
+            _getProductToken(_name, _memo).createNonFungibleTokenWithCustomFees(fixedFees, royaltyFees);
     }
 
     function _mintProductToken(address _tokenAddress, int64 _initialSupply)
@@ -98,13 +98,14 @@ library LibProduct {
         (mintResponseCode_, newTotalSupply_, serialNumbers_) = _tokenAddress.mintToken(_initialSupply, metadata);
     }
 
-    function _getProductToken(string calldata _name)
+    function _getProductToken(string calldata _name, string calldata _memo)
         internal
         view
         returns (IHederaTokenService.HederaToken memory token_)
     {
         token_.name = _name;
         token_.symbol = "CSP";
+        token_.memo = _memo;
         token_.treasury = address(this);
         token_.tokenKeys = _getProductTokenKeys();
     }
@@ -128,8 +129,8 @@ library LibProduct {
         fixedFees_ = new IHederaTokenService.FixedFee[](1);
         fixedFees_[0] = IHederaTokenService.FixedFee({
             amount: _price,
-            tokenId: usdcAddress,
-            useHbarsForPayment: false,
+            tokenId: address(0),
+            useHbarsForPayment: true,
             useCurrentTokenForPayment: false,
             feeCollector: address(this)
         });
@@ -139,8 +140,8 @@ library LibProduct {
             numerator: 1,
             denominator: 1000,
             amount: _price,
-            tokenId: usdcAddress,
-            useHbarsForPayment: false,
+            tokenId: address(0),
+            useHbarsForPayment: true,
             feeCollector: address(this)
         });
     }
