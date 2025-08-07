@@ -9,18 +9,6 @@ import {KeyType, KeyValueType, KeyHelperStorage, KEYHELPER_STORAGE_SLOT} from "@
 library LibKeyHelper {
     using Bits for uint256;
 
-    // TODO: initialize with diamond
-    // constructor() {
-    //     KeyHelperStorage storage $ = _getKeyHelperStorage();
-    //     $.keyTypes[KeyType.ADMIN] = 1;
-    //     $.keyTypes[KeyType.KYC] = 2;
-    //     $.keyTypes[KeyType.FREEZE] = 4;
-    //     $.keyTypes[KeyType.WIPE] = 8;
-    //     $.keyTypes[KeyType.SUPPLY] = 16;
-    //     $.keyTypes[KeyType.FEE] = 32;
-    //     $.keyTypes[KeyType.PAUSE] = 64;
-    // }
-
     function _getKeyHelperStorage() internal pure returns (KeyHelperStorage storage khs_) {
         assembly {
             khs_.slot := KEYHELPER_STORAGE_SLOT

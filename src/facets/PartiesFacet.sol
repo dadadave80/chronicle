@@ -7,9 +7,10 @@ import {LibOwnableRoles} from "@diamond/libraries/LibOwnableRoles.sol";
 
 contract PartiesFacet {
     using LibParty for *;
+    using LibOwnableRoles for uint256;
 
     modifier onlyOwnerOrPartyAdmin() {
-        LibOwnableRoles._checkOwnerOrRoles(PARTY_ADMIN_ROLE);
+        PARTY_ADMIN_ROLE._checkOwnerOrRoles();
         _;
     }
 

@@ -13,3 +13,9 @@ remappings = [
     'hedera-token-service/=lib/hedera-smart-contracts/contracts/system-contracts/hedera-token-service/',
     'hedera-system-contracts/=lib/hedera-smart-contracts/contracts/system-contracts/'
 ]
+ffi = true
+optimizer_runs = 1_000_000
+
+[rpc_endpoints]
+testnet = "${TEST_RPC_URL}"
+previewnet = "${PRE_RPC_URL}"
