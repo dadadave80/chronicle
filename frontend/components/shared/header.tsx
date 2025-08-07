@@ -68,13 +68,7 @@ const Header = ({
         </div>
 
         <div className="flex items-center gap-3">
-          {/*<appkit-button />*/}
-          <button
-            type="button"
-            className="md:w-[160px] w-[130px] md:h-[45px] h-[40px] flex justify-center items-center bg-[#000000E5] rounded-[8px] cursor-pointer md:text-base text-[14px] font-[500] font-nunitoSans text-white"
-          >
-            Connect Wallet
-          </button>
+          <appkit-button />
         </div>
       </div>
     </header>
