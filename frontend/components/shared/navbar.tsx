@@ -6,10 +6,13 @@ import { Link as Spy } from "react-scroll";
 import MaxWrapper from "./max-wrapper";
 import MobileNav from "./mobile-nav";
 import { NavLinks } from "@/utils/navLinkData";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
+
+  const router = useRouter();
 
   // This hook listens for changes in the scrollY motion value
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -61,6 +64,7 @@ const Navbar = () => {
           {/* CTA Button */}
           <button
             type="button"
+            onClick={() => router.push("/register")}
             className="md:w-[140px] w-[110px] md:h-[45px] h-[40px] flex justify-center items-center bg-[#000000E5] rounded-[8px] cursor-pointer md:text-base text-[14px] font-[500] font-nunitoSans text-white"
           >
             Launch App

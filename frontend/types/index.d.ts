@@ -20,3 +20,8 @@ export type ContactFormValues = {
   email: string;
   message: string;
 };
+
+export type RegisterInputValues = {
+  name: string;
+  role: string;
+};
