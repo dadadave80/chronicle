@@ -22,8 +22,6 @@ library LibProduct {
     using LibHederaTokenService for address;
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    address constant usdcAddress = address(0x0000000000000000000000000000000000068cDa);
-
     function _productStorage() internal pure returns (ProductStorage storage pds_) {
         assembly {
             pds_.slot := PRODUCT_STORAGE_SLOT
