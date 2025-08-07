@@ -20,11 +20,20 @@ enum Role {
     Retailer
 }
 
+enum Rating {
+    Zero,
+    One,
+    Two,
+    Three,
+    Four,
+    Five
+}
+
 struct Party {
     string name;
     address addr;
     Role role;
     bool active;
     bool frozen;
-    uint8 rating; // 0-5
+    Rating rating;
 }

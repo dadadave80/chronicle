@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import {Party, Role, PartyStorage, PARTY_STORAGE_SLOT} from "@chronicle-types/PartyStorage.sol";
+import {Party, Role, Rating, PartyStorage, PARTY_STORAGE_SLOT} from "@chronicle-types/PartyStorage.sol";
 import {LibContext} from "@chronicle/libraries/LibContext.sol";
 import "@chronicle-logs/PartyLogs.sol";
 
@@ -21,8 +21,16 @@ library LibParty {
         if ($.parties[sender].frozen) revert("Party frozen");
         if (!$.roles[_role].add(sender)) revert("Role already exists");
         if (!$.activeParties.add(sender)) revert("Party already exists");
-        $.parties[sender] = Party(_name, sender, _role, true, false, 0);
-        emit PartyRegistered($.parties[sender]);
+        Party memory party = Party({
+            name: _name,
+            addr: sender,
+            role: _role,
+            active: true,
+            frozen: false,
+            rating: Rating.Zero
+        });
+        $.parties[sender] = party;
+        emit PartyRegistered(party);
     }
 
     function _deactivateParty(Role _role) internal {
