@@ -12,7 +12,7 @@ const FAQs = () => {
   return (
     <section className="w-full lg:py-38 py-16 bg-white flex flex-col lg:gap-24 gap-12 items-center">
       <div className="w-full flex flex-col items-center justify-center">
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-ibm font-bold text-black">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl text-center font-ibm font-bold text-black">
           Frequently Asked Questions
         </h1>
       </div>

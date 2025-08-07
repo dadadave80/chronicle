@@ -10,23 +10,13 @@ export type ErrorDisplayProps = {
   message?: string;
 };
 
-export type PromoCardType = {
-  imageUrl: string;
-  imageAlt: string;
-  title: string;
-  linkText: string;
-  href: string;
-  bgColor: string;
-};
-
 export type NavLinksType = {
   name: string;
   to: string;
 };
 
-export type PartnersType = {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
+export type ContactFormValues = {
+  name: string;
+  email: string;
+  message: string;
 };

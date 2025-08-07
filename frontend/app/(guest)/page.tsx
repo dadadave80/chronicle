@@ -1,3 +1,4 @@
+import Contact from "@/components/guest/contact";
 import FAQs from "@/components/guest/faqs";
 import Features from "@/components/guest/features";
 import HeroSection from "@/components/guest/hero-section";
@@ -17,6 +18,8 @@ export default function Home() {
       <HowItWorks />
       {/* FAQs */}
       <FAQs />
+      {/* Contact */}
+      <Contact />
     </main>
   );
 }
