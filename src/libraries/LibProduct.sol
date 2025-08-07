@@ -126,8 +126,8 @@ library LibProduct {
         fixedFees_ = new IHederaTokenService.FixedFee[](1);
         fixedFees_[0] = IHederaTokenService.FixedFee({
             amount: _price,
-            tokenId: usdcAddress,
-            useHbarsForPayment: false,
+            tokenId: address(0),
+            useHbarsForPayment: true,
             useCurrentTokenForPayment: false,
             feeCollector: address(this)
         });
@@ -137,8 +137,8 @@ library LibProduct {
             numerator: 1,
             denominator: 1000,
             amount: _price,
-            tokenId: usdcAddress,
-            useHbarsForPayment: false,
+            tokenId: address(0),
+            useHbarsForPayment: true,
             feeCollector: address(this)
         });
     }
