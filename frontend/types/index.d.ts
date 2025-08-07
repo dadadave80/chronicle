@@ -10,31 +10,18 @@ export type ErrorDisplayProps = {
   message?: string;
 };
 
-export type SubNavLinkType = {
-  name: string;
-  href: string;
-  description: string;
-};
-
-export type PromoCardType = {
-  imageUrl: string;
-  imageAlt: string;
-  title: string;
-  linkText: string;
-  href: string;
-  bgColor: string;
-};
-
 export type NavLinksType = {
   name: string;
-  href: string;
-  subNav?: SubNavLinkType[];
-  promo?: PromoCardType;
+  to: string;
 };
 
-export type PartnersType = {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
+export type ContactFormValues = {
+  name: string;
+  email: string;
+  message: string;
+};
+
+export type RegisterInputValues = {
+  name: string;
+  role: string;
 };

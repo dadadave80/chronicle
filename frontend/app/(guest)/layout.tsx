@@ -1,5 +1,6 @@
-// import Footer from "@/components/shared/footer";
+import Footer from "@/components/shared/footer";
 import NavBar from "@/components/shared/navbar";
+import ScrollToTopBtn from "@/components/shared/scrollto-top-btn";
 
 export default function GuestLayout({
   children,
@@ -10,7 +11,8 @@ export default function GuestLayout({
     <main className="w-full">
       <NavBar />
       {children}
-      {/*<Footer />*/}
+      <ScrollToTopBtn />
+      <Footer />
     </main>
   );
 }

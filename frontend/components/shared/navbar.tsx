@@ -5,10 +5,14 @@ import Logo from "./logo";
 import { Link as Spy } from "react-scroll";
 import MaxWrapper from "./max-wrapper";
 import MobileNav from "./mobile-nav";
+import { NavLinks } from "@/utils/navLinkData";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
+
+  const router = useRouter();
 
   // This hook listens for changes in the scrollY motion value
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -30,43 +34,38 @@ const Navbar = () => {
       }}
       animate={hidden ? "hidden" : "visible"}
       transition={{ duration: 0.35, ease: "easeInOut", delay: 0.5 }}
-      className="fixed lg:top-[20px] top-[10px] left-[50%] translate-x-[-50%] w-[95%] lg:w-1/2 md:w-[70%] max-w-[1400px] z-50 bg-black/60 backdrop-blur-[20px] backdrop-filter rounded-[8px]"
+      className="fixed lg:top-[20px] top-[10px] left-[50%] translate-x-[-50%] w-[95%] md:w-[70%] max-w-[1400px] z-50 bg-white/20 backdrop-blur-[20px] backdrop-filter rounded-[8px] border border-[#E5E7EB]"
     >
-      <nav className="w-full flex items-center justify-between py-5 md:px-8 px-6">
+      <nav className="w-full flex items-center justify-between md:py-5 py-4 md:px-8 px-4">
         {/* Logo */}
         <Logo
-          classname="md:w-[115px] w-[100px]"
+          classname="md:w-[140px] w-[115px]"
           href="/"
-          image="/white_logo.svg"
+          image="/white-logo-nobg.png"
         />
 
         {/* Nav Links With Mega Menu Dropdown */}
-        <div className="hidden md:flex gap-[24px] font-nunitoSans items-center">
-          <Spy
-            to="whyStrimz"
-            smooth={true}
-            spy={true}
-            duration={700}
-            className={`capitalize font-poppins text-[#58556A] font-[500] text-[16px] cursor-pointer transition-all hover:text-strimzPrimary`}
-          >
-            why strimz?
-          </Spy>
-          <Spy
-            to="features"
-            smooth={true}
-            spy={true}
-            duration={500}
-            className={`capitalize font-poppins text-[#58556A] font-[500] text-[16px] cursor-pointer transition-all hover:text-strimzPrimary`}
-          >
-            features
-          </Spy>
+        <div className="hidden lg:flex gap-[24px] items-center">
+          {NavLinks.map((link, index) => (
+            <Spy
+              key={index}
+              to={link.to}
+              smooth={true}
+              spy={true}
+              duration={700}
+              className={`capitalize font-ibm text-gray-700 hover:text-[#000000E5] font-normal text-base cursor-pointer transition-all`}
+            >
+              {link.name}
+            </Spy>
+          ))}
         </div>
 
         <div className="flex items-center gap-[18px]">
           {/* CTA Button */}
           <button
             type="button"
-            className="md:w-[130px] w-[110px] h-[40px] flex justify-center items-center bg-[#F9FAFB] rounded-[8px] border border-[#E5E7EB] shadow-[0px_-2px_4px_0px_#00000014_inset] cursor-pointer text-[14px] font-[600] font-poppins text-strimzBrandAccent"
+            onClick={() => router.push("/register")}
+            className="md:w-[140px] w-[110px] md:h-[45px] h-[40px] flex justify-center items-center bg-[#000000E5] rounded-[8px] cursor-pointer md:text-base text-[14px] font-[500] font-nunitoSans text-white"
           >
             Launch App
           </button>

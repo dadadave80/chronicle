@@ -16,13 +16,13 @@ const marcellus = Marcellus({
 const ibmplexmono = IBM_Plex_Mono({
   subsets: ["latin"],
   variable: "--font-ibm-plex-mono",
-  weight: "400",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata = getMetadata({
-  title: "Chronify: Stable Web3 Investments for Predictable Growth",
+  title: "Chronify: The Future of Supply Chain Transparency, Built on Hedera",
   description:
-    "Chronify is a revolutionary fintech protocol offering reliable, appreciating digital assets that provide stability and consistent returns, serving as a safe haven from market volatility. Our core offering, $FIBO, is engineered for zero downside risk, appreciating in predictable stages to mimic the stability of traditional bonds. Invest with confidence and achieve steady, transparent returns with Chronify.",
+    "Chronify leverages the power of Hedera and the modular EIP-2535 Diamond Standard to deliver an unparalleled, secure, and scalable supply chain solution. Track products from origin to consumer with verifiable trust and efficiency.",
 });
 
 export default function RootLayout({

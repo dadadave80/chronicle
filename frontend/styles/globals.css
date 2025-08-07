@@ -7,7 +7,7 @@
     --color-background: var(--background);
     --color-foreground: var(--foreground);
     --font-nunitoSans: var(--font-nunito-sans);
-    --font-inter: var(--font-ibm-plex-mono);
+    --font-ibm: var(--font-ibm-plex-mono);
     --font-marcellus: var(--font-marcellus);
     --font-sans: var(--font-geist-sans);
     --font-mono: var(--font-geist-mono);
@@ -44,6 +44,41 @@
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
     --radius-xl: calc(var(--radius) + 4px);
+    --radius: 0.625rem;
+    --animate-grid: grid 25s linear infinite;
+    --animate-first-lorry: lorry 10s linear alternate infinite;
+    --animate-second-lorry: lorry-two 7s linear alternate infinite;
+
+    @keyframes grid {
+        0% {
+            transform: translateY(0);
+        }
+        100% {
+            transform: translateY(-50%);
+        }
+    }
+    @keyframes lorry {
+        0% {
+            transform: translateX(-10%);
+        }
+        50% {
+            transform: translateX(0%);
+        }
+        100% {
+            transform: translateX(10%);
+        }
+    }
+    @keyframes lorry-two {
+        0% {
+            transform: translateX(10%);
+        }
+        50% {
+            transform: translateX(0%);
+        }
+        100% {
+            transform: translateX(-15%);
+        }
+    }
 }
 
 :root {
