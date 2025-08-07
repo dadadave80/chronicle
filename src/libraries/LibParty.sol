@@ -38,7 +38,7 @@ library LibParty {
         address sender = LibContext._msgSender();
         if (!$.activeParties.remove(sender)) revert("Party not active");
         if (!$.roles[_role].remove(sender)) revert("Role not found");
-        if ($.parties[sender].active) $.parties[sender].active = false;
+        delete $.parties[sender].active;
         emit PartyDeactivated($.parties[sender]);
     }
 
