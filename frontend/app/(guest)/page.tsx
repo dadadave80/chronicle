@@ -1,3 +1,4 @@
+import FAQs from "@/components/guest/faqs";
 import Features from "@/components/guest/features";
 import HeroSection from "@/components/guest/hero-section";
 import HowItWorks from "@/components/guest/how-it-works";
@@ -14,6 +15,8 @@ export default function Home() {
       <Features />
       {/* How It Works */}
       <HowItWorks />
+      {/* FAQs */}
+      <FAQs />
     </main>
   );
 }
