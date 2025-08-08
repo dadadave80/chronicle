@@ -7,7 +7,10 @@ import {
 } from "@chronicle-types/PartyStorage.sol";
 import {LibContext} from "@chronicle/libraries/LibContext.sol";
 import {LibOwnableRoles} from "@diamond/libraries/LibOwnableRoles.sol";
+/// forge-lint: disable-next-line(unaliased-plain-import)
 import "@chronicle-logs/PartyLogs.sol";
+/// forge-lint: disable-next-line(unaliased-plain-import)
+import "@chronicle/libraries/errors/PartyErrors.sol";
 
 library LibParty {
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -27,9 +30,9 @@ library LibParty {
     function _registerParty(string calldata _name, Role _role) internal {
         PartyStorage storage $ = _partyStorage();
         address sender = LibContext._msgSender();
-        if ($.parties[sender].frozen) revert("Party frozen");
-        if (!$.roles[_role].add(sender)) revert("Role already exists");
-        if (!$.activeParties.add(sender)) revert("Party already exists");
+        if ($.parties[sender].frozen) revert PartyFrozen(sender);
+        if (!$.roles[_role].add(sender)) revert RoleAlreadyExists(_role);
+        if (!$.activeParties.add(sender)) revert PartyAlreadyExists(sender);
         Party memory party =
             Party({name: _name, addr: sender, role: _role, active: true, frozen: false, rating: Rating.Zero});
         $.parties[sender] = party;
@@ -39,8 +42,8 @@ library LibParty {
     function _deactivateParty(Role _role) internal {
         PartyStorage storage $ = _partyStorage();
         address sender = LibContext._msgSender();
-        if (!$.activeParties.remove(sender)) revert("Party not active");
-        if (!$.roles[_role].remove(sender)) revert("Role not found");
+        if (!$.activeParties.remove(sender)) revert PartyNotActive(sender);
+        if (!$.roles[_role].remove(sender)) revert RoleNotFound(_role);
         delete $.parties[sender].active;
         emit PartyDeactivated($.parties[sender]);
     }
