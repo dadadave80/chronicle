@@ -2,7 +2,9 @@
 import Footer from "@/components/shared/dash-footer";
 import Header from "@/components/shared/header";
 import SideBar from "@/components/shared/sidebar";
-import { useState } from "react";
+import { useAppKitAccount } from "@reown/appkit/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function DashboardLayout({
   children,
@@ -10,6 +12,15 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const { isConnected } = useAppKitAccount();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isConnected) {
+      router.push("/");
+    }
+  }, [isConnected, router]);
+
   return (
     <div className=" bg-white lg:p-1.5">
       {/* Page Wrapper Start  */}
