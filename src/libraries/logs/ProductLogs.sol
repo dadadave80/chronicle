@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.30;
 
-import {Status, Product} from "@chronicle-types/ProductStorage.sol";
+import {Product} from "@chronicle-types/ProductStorage.sol";
 
-event ProductCreated(Product indexed product);
+event ProductCreated(Product indexed product, int64[] serialNumbers);
 
-event ProductTransferred(address indexed tokenAddress, address from, address to, Status status);
+event ProductUpdated(Product indexed product);
+
+event ProductTransferred(address indexed from, address indexed to, Product indexed product);
+
+event ProductQuantityIncreased(Product indexed product, int64[] serialNumbers);
+
+event ProductQuantityDecreased(Product indexed product, int64[] serialNumbers);
