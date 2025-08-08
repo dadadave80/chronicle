@@ -20,7 +20,7 @@ const useRegister = () => {
 
   const { data: hash, error, writeContract } = useWriteContract();
 
-  const register = useCallback(
+  const registerUser = useCallback(
     async (name: string, role: string) => {
       try {
         if (!isConnected) {
@@ -61,6 +61,9 @@ const useRegister = () => {
             get_role_enum_by_index = 3;
             break;
           default:
+            toast.error("Invalid role selected", {
+              position: "top-right",
+            });
             return;
         }
 
@@ -87,39 +90,47 @@ const useRegister = () => {
   const toastId = "register";
 
   useEffect(() => {
-    if (isConfirming) {
+    if (hash && isConfirming) {
       toast.loading("Processing...", {
         id: toastId,
         position: "top-right",
       });
     }
 
-    if (isConfirmed) {
+    if (isConfirmed && hash) {
+      toast.dismiss(toastId);
+
       toast.success("Registration successful", {
         id: toastId,
         position: "top-right",
       });
 
       const role = currentRoleRef.current;
-      if (role === "Transporter") {
-        router.push("/transport");
-      } else if (role === "Supplier" || role === "Retailer") {
-        router.push("/dashboard");
-      }
 
-      // Clear the stored role after redirect
-      currentRoleRef.current = "";
+      setTimeout(() => {
+        if (role === "Transporter") {
+          router.push("/transport");
+        } else if (role === "Supplier" || role === "Retailer") {
+          router.push("/dashboard");
+        }
+
+        // Clear the stored role after redirect
+        currentRoleRef.current = "";
+      }, 1500);
     }
 
     if (error) {
+      toast.dismiss(toastId);
       toast.error((error as BaseError).shortMessage || error.message, {
         id: toastId,
         position: "top-right",
       });
-    }
-  }, [isConfirmed, error, isConfirming, router]);
 
-  return { register };
+      currentRoleRef.current = "";
+    }
+  }, [isConfirmed, error, isConfirming, hash, router]);
+
+  return { registerUser };
 };
 
 export default useRegister;

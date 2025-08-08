@@ -60,7 +60,6 @@ const useGetUser = () => {
 
   useEffect(() => {
     if (isSuccess && user) {
-      // Type assertion since wagmi returns the data as array/tuple
       const partyData = user as Party;
 
       // Additional validation to ensure we have valid data

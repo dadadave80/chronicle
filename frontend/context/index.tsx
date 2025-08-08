@@ -35,7 +35,7 @@ const metadata = {
 createAppKit({
   adapters: [wagmiAdapter],
   projectId,
-  networks: [hederaMainnet, hederaTestnet, hederaPreviewnet],
+  networks: [hederaPreviewnet, hederaTestnet, hederaMainnet],
   defaultNetwork: hederaPreviewnet,
   metadata: metadata,
   features: {

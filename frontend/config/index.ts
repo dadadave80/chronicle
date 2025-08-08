@@ -9,7 +9,7 @@ if (!projectId) {
   throw new Error("Project ID is not defined");
 }
 
-export const networks = [hederaTestnet, hederaMainnet, hederaPreviewnet];
+export const networks = [hederaPreviewnet, hederaTestnet, hederaMainnet];
 
 //Set up the Wagmi Adapter (Config)
 export const wagmiAdapter = new WagmiAdapter({
