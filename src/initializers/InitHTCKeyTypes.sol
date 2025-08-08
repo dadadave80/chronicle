@@ -5,7 +5,7 @@ import {LibKeyHelper} from "@chronicle/libraries/hts/LibKeyHelper.sol";
 import {KeyType, KeyHelperStorage} from "@chronicle-types/KeyHelperStorage.sol";
 
 contract InitHTCKeyTypes {
-    function initHTCKeyTypes() external {
+    function initHtcKeyTypes() external {
         KeyHelperStorage storage $ = LibKeyHelper._getKeyHelperStorage();
         $.keyTypes[KeyType.ADMIN] = 1;
         $.keyTypes[KeyType.KYC] = 2;

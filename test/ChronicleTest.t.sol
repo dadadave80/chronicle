@@ -4,7 +4,6 @@ pragma solidity 0.8.30;
 import {Facet} from "@diamond/libraries/types/DiamondTypes.sol";
 import {DeployedChronicleState} from "@chronicle-test/helpers/TestStates.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-// import {IERC173} from "@openzeppelin/contracts/utils/introspection/IERC173.sol";
 import {IDiamondCut} from "@diamond/interfaces/IDiamondCut.sol";
 import {IDiamondLoupe} from "@diamond/interfaces/IDiamondLoupe.sol";
 
@@ -14,7 +13,7 @@ contract ChronicleTest is DeployedChronicleState {
     }
 
     function test_ChronicleOwner() public view {
-        assertEq(ownableRolesFacet.owner(), chronicleOwner);
+        assertEq(ownableRolesFacet.owner(), CHRONICLE_OWNER);
     }
 
     function test_ChronicleFacetsDeployed() public view {
