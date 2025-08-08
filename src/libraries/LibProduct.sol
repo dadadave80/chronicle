@@ -11,11 +11,13 @@ import {KeyType, KeyValueType} from "@chronicle-types/KeyHelperStorage.sol";
 import {Status, Product, ProductStorage, PRODUCT_STORAGE_SLOT} from "@chronicle-types/ProductStorage.sol";
 import {LibParty} from "@chronicle/libraries/LibParty.sol";
 import {LibKeyHelper} from "@chronicle/libraries/hts/LibKeyHelper.sol";
+import {LibFeeHelper} from "@chronicle/libraries/hts/LibFeeHelper.sol";
 import "@chronicle-logs/ProductLogs.sol";
 
 library LibProduct {
     using LibParty for address;
     using LibKeyHelper for KeyType;
+    using LibFeeHelper for int64;
     using LibHederaTokenService for IHederaTokenService.HederaToken;
     using LibHederaTokenService for address;
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -205,11 +207,16 @@ library LibProduct {
     }
 
     function _mintProductToken(address _tokenAddress, int64 _initialSupply)
+    function _getProductFees(int64 _price)
         private
         returns (int256 mintResponseCode_, int64 newTotalSupply_, int64[] memory serialNumbers_)
+        view
+        returns (IHederaTokenService.FixedFee[] memory fixedFees_, IHederaTokenService.RoyaltyFee[] memory royaltyFees_)
     {
         bytes[] memory metadata = new bytes[](0);
         (mintResponseCode_, newTotalSupply_, serialNumbers_) = _tokenAddress.mintToken(_initialSupply, metadata);
+        fixedFees_ = _price.createSingleFixedFeeForHbars(address(this));
+        royaltyFees_ = LibFeeHelper.createRoyaltyFeesWithAllTypes(1, 1000, _price, USDC_ADDRESS, address(this));
     }
 
     function _getProductToken(string calldata _name, string calldata _memo)
@@ -233,30 +240,5 @@ library LibProduct {
         tokenKeys_[4] = KeyType.SUPPLY.getSingleKey(KeyValueType.CONTRACT_ID, address(this));
         tokenKeys_[5] = KeyType.FEE.getSingleKey(KeyValueType.CONTRACT_ID, address(this));
         tokenKeys_[6] = KeyType.PAUSE.getSingleKey(KeyValueType.CONTRACT_ID, address(this));
-    }
-
-    function _getProductFees(int64 _price)
-        private
-        view
-        returns (IHederaTokenService.FixedFee[] memory fixedFees_, IHederaTokenService.RoyaltyFee[] memory royaltyFees_)
-    {
-        fixedFees_ = new IHederaTokenService.FixedFee[](1);
-        fixedFees_[0] = IHederaTokenService.FixedFee({
-            amount: _price,
-            tokenId: address(0),
-            useHbarsForPayment: true,
-            useCurrentTokenForPayment: false,
-            feeCollector: address(this)
-        });
-
-        royaltyFees_ = new IHederaTokenService.RoyaltyFee[](1);
-        royaltyFees_[0] = IHederaTokenService.RoyaltyFee({
-            numerator: 1,
-            denominator: 1000,
-            amount: _price,
-            tokenId: address(0),
-            useHbarsForPayment: true,
-            feeCollector: address(this)
-        });
     }
 }
