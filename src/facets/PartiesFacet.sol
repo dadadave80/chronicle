@@ -1,18 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Role, Party, PARTY_ADMIN_ROLE} from "@chronicle-types/PartyStorage.sol";
+import {Role, Party} from "@chronicle-types/PartyStorage.sol";
 import {LibParty} from "@chronicle/libraries/LibParty.sol";
-import {LibOwnableRoles} from "@diamond/libraries/LibOwnableRoles.sol";
 
 contract PartiesFacet {
     using LibParty for *;
-    using LibOwnableRoles for uint256;
-
-    modifier onlyOwnerOrPartyAdmin() {
-        PARTY_ADMIN_ROLE._checkOwnerOrRoles();
-        _;
-    }
 
     function registerParty(string calldata _name, Role _role) external {
         _name._registerParty(_role);
@@ -22,11 +15,11 @@ contract PartiesFacet {
         _role._deactivateParty();
     }
 
-    function freezeParty(address _addr) external onlyOwnerOrPartyAdmin {
+    function freezeParty(address _addr) external {
         _addr._freezeParty();
     }
 
-    function unfreezeParty(address _addr) external onlyOwnerOrPartyAdmin {
+    function unfreezeParty(address _addr) external {
         _addr._unFreezeParty();
     }
 

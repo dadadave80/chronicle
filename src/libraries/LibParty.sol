@@ -2,17 +2,26 @@
 pragma solidity 0.8.30;
 
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import {Party, Role, Rating, PartyStorage, PARTY_STORAGE_SLOT} from "@chronicle-types/PartyStorage.sol";
+import {
+    Party, Role, Rating, PartyStorage, PARTY_STORAGE_SLOT, PARTY_ADMIN_ROLE
+} from "@chronicle-types/PartyStorage.sol";
 import {LibContext} from "@chronicle/libraries/LibContext.sol";
+import {LibOwnableRoles} from "@diamond/libraries/LibOwnableRoles.sol";
 import "@chronicle-logs/PartyLogs.sol";
 
 library LibParty {
     using EnumerableSet for EnumerableSet.AddressSet;
+    using LibOwnableRoles for uint256;
 
     function _partyStorage() internal pure returns (PartyStorage storage ps_) {
         assembly {
             ps_.slot := PARTY_STORAGE_SLOT
         }
+    }
+
+    modifier onlyOwnerOrPartyAdmin() {
+        _onlyOwnerOrPartyAdmin();
+        _;
     }
 
     function _registerParty(string calldata _name, Role _role) internal {
@@ -36,12 +45,16 @@ library LibParty {
         emit PartyDeactivated($.parties[sender]);
     }
 
-    function _freezeParty(address _addr) internal {
+    function _freezeParty(address _addr) internal onlyOwnerOrPartyAdmin {
         _partyStorage().parties[_addr].frozen = true;
     }
 
-    function _unFreezeParty(address _addr) internal {
+    function _unFreezeParty(address _addr) internal onlyOwnerOrPartyAdmin {
         _partyStorage().parties[_addr].frozen = false;
+    }
+
+    function _onlyOwnerOrPartyAdmin() internal view {
+        PARTY_ADMIN_ROLE._checkOwnerOrRoles();
     }
 
     function _hasRole(Role _role) internal view returns (bool) {
