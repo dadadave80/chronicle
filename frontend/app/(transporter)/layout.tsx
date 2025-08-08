@@ -134,7 +134,7 @@ const SideBar = ({
   );
 };
 
-export const SideBarLinks = [
+const SideBarLinks = [
   {
     href: "/transport",
     title: "Delivery",
