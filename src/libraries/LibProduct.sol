@@ -47,6 +47,8 @@ library LibProduct {
         (int256 mintResponseCode, int64 newTotalSupply, int64[] memory serialNumbers) =
             _mintProductToken(tokenAddress, _initialSupply);
         if (mintResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to mint product");
+        _associateProductToken(address(this), tokenAddress);
+        _associateProductToken(sender, tokenAddress);
 
         ProductStorage storage $ = _productStorage();
         $.activeProducts.add(tokenAddress);
@@ -206,6 +208,15 @@ library LibProduct {
             _getProductFees(_price);
         (createResponseCode_, tokenAddress_) =
             _getProductToken(_name, _memo).createNonFungibleTokenWithCustomFees(fixedFees, royaltyFees);
+
+    function _associateProductToken(address _party, address _tokenAddress) private {
+        (int256 associateResponseCode) = _party.associateToken(_tokenAddress);
+        if (
+            associateResponseCode != HederaResponseCodes.SUCCESS
+                || associateResponseCode != HederaResponseCodes.TOKEN_ALREADY_ASSOCIATED_TO_ACCOUNT
+        ) revert("Failed to associate token");
+    }
+
     }
 
     function _mintProductToken(address _tokenAddress, int64 _initialSupply)
