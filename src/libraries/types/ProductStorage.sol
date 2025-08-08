@@ -13,11 +13,12 @@ struct ProductStorage {
     EnumerableSet.AddressSet activeProducts;
 }
 
-enum Status {
+enum ProductStatus {
+    None,
     ForSale,
-    Sold,
-    Shipped,
-    Received
+    Ordered,
+    Assigned,
+    Sold
 }
 
 struct Product {
@@ -26,8 +27,10 @@ struct Product {
     string name;
     string memo;
     int64 price;
+    int64 transportFee;
     int64 totalSupply;
-    address owner;
-    Status status;
-    uint40 timestamp;
+    address supplier;
+    ProductStatus status;
+    uint40 created;
+    uint40 updated;
 }
