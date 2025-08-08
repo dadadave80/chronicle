@@ -40,15 +40,13 @@ library LibProduct {
         address sender = LibContext._msgSender();
         if (!sender._hasActiveRole(Role.Supplier)) revert("Not a Supplier");
 
-        (int256 createResponseCode, address tokenAddress) = _createProductToken(_name, _memo, _price);
-        if (createResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");
+        address tokenAddress = _createProductToken(_name, _memo, _price);
         if (tokenAddress == address(0)) revert("Invalid token address");
 
-        (int256 mintResponseCode, int64 newTotalSupply, int64[] memory serialNumbers) =
-            _mintProductToken(tokenAddress, _initialSupply);
-        if (mintResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to mint product");
         _associateProductToken(address(this), tokenAddress);
         _associateProductToken(sender, tokenAddress);
+
+        (int64 newTotalSupply, int64[] memory serialNumbers) = _mintProductToken(tokenAddress, _initialSupply);
 
         ProductStorage storage $ = _productStorage();
         $.activeProducts.add(tokenAddress);
@@ -98,9 +96,7 @@ library LibProduct {
         if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
         if ($.tokenToProduct[_tokenAddress].status != Status.Created) revert("Product sold");
 
-        (int256 mintResponseCode, int64 newTotalSupply, int64[] memory serialNumbers) =
-            _mintProductToken(_tokenAddress, _quantity);
-        if (mintResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to mint product");
+        (int64 newTotalSupply, int64[] memory serialNumbers) = _mintProductToken(_tokenAddress, _quantity);
 
         Product memory product = $.tokenToProduct[_tokenAddress];
         product.totalSupply = newTotalSupply;
@@ -202,12 +198,15 @@ library LibProduct {
 
     function _createProductToken(string calldata _name, string calldata _memo, int64 _price)
         private
-        returns (int256 createResponseCode_, address tokenAddress_)
+        returns (address)
     {
         (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.RoyaltyFee[] memory royaltyFees) =
             _getProductFees(_price);
-        (createResponseCode_, tokenAddress_) =
+        (int256 createResponseCode, address tokenAddress) =
             _getProductToken(_name, _memo).createNonFungibleTokenWithCustomFees(fixedFees, royaltyFees);
+        if (createResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");
+        return tokenAddress;
+    }
 
     function _associateProductToken(address _party, address _tokenAddress) private {
         (int256 associateResponseCode) = _party.associateToken(_tokenAddress);
@@ -217,17 +216,19 @@ library LibProduct {
         ) revert("Failed to associate token");
     }
 
+    function _mintProductToken(address _tokenAddress, int64 _initialSupply) private returns (int64, int64[] memory) {
+        bytes[] memory metadata;
+        (int256 mintResponseCode, int64 newTotalSupply, int64[] memory serialNumbers) =
+            _tokenAddress.mintToken(_initialSupply, metadata);
+        if (mintResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to mint product");
+        return (newTotalSupply, serialNumbers);
     }
 
-    function _mintProductToken(address _tokenAddress, int64 _initialSupply)
     function _getProductFees(int64 _price)
         private
-        returns (int256 mintResponseCode_, int64 newTotalSupply_, int64[] memory serialNumbers_)
         view
         returns (IHederaTokenService.FixedFee[] memory fixedFees_, IHederaTokenService.RoyaltyFee[] memory royaltyFees_)
     {
-        bytes[] memory metadata = new bytes[](0);
-        (mintResponseCode_, newTotalSupply_, serialNumbers_) = _tokenAddress.mintToken(_initialSupply, metadata);
         fixedFees_ = _price.createSingleFixedFeeForHbars(address(this));
         royaltyFees_ = LibFeeHelper.createRoyaltyFeesWithAllTypes(1, 1000, _price, USDC_ADDRESS, address(this));
     }
