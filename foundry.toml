@@ -13,6 +13,7 @@ remappings = [
     'hedera-token-service/=lib/hedera-smart-contracts/contracts/system-contracts/hedera-token-service/',
     'hedera-system-contracts/=lib/hedera-smart-contracts/contracts/system-contracts/'
 ]
+via-ir = true
 ffi = true
 optimizer_runs = 1_000_000
 
