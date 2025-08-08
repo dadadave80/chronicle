@@ -22,13 +22,13 @@ enum Status {
 }
 
 struct Product {
-    uint24 id;
+    uint32 id;
     address tokenAddress;
     string name;
+    string memo;
     int64 price;
     int64 totalSupply;
     address owner;
     Status status;
-    uint32 timestamp;
-    int64[] serialNumbers;
+    uint40 timestamp;
 }
