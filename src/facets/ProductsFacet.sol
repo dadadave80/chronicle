@@ -11,6 +11,12 @@ contract ProductsFacet {
         _name._addProduct(_memo, _price, _initialSupply);
     }
 
+    function updateProduct(address _tokenAddress, string calldata _name, string calldata _memo, int64 _price)
+        external
+    {
+        _tokenAddress._updateProduct(_name, _memo, _price);
+    }
+
     function getProductByTokenAddress(address _tokenAddress) public view returns (Product memory) {
         return _tokenAddress._getProductByTokenAddress();
     }

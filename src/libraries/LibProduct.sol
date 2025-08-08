@@ -59,24 +59,40 @@ library LibProduct {
         emit ProductCreated(product, serialNumbers);
     }
 
-    // TODO: implement
-    // function _updateProduct(address _tokenAddress, Product memory _product) internal {
-    //     ProductStorage storage $ = _productStorage();
-    //     if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
-    //     if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
-    //     $.tokenToProduct[_tokenAddress] = _product;
-    // }
+    function _updateProduct(address _tokenAddress, string calldata _name, string calldata _memo, int64 _price)
+        internal
+    {
+        ProductStorage storage $ = _productStorage();
+        if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
+        if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
+        if (
+            $.tokenToProduct[_tokenAddress].status != Status.Created
+                || $.tokenToProduct[_tokenAddress].status != Status.ForSale
+        ) revert("Product sold");
 
-    // function _updateProductTokenInfo(address _tokenAddress, IHederaTokenService.HederaToken memory tokenInfo)
-    //     internal
-    // {
-    //     address sender = LibContext._msgSender();
-    //     ProductStorage storage $ = _productStorage();
-    //     if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
-    //     if ($.tokenToProduct[_tokenAddress].owner != sender) revert("Not the owner");
-    //     int256 responseCode = _tokenAddress.updateTokenInfo(tokenInfo);
-    //     if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to update product token info");
-    // }
+        _updateProductTokenInfo(_tokenAddress, _getProductToken(_name, _memo));
+        _updateProductTokenFees(_tokenAddress, _price);
+
+        Product memory product = $.tokenToProduct[_tokenAddress];
+        product.name = _name;
+        product.memo = _memo;
+        product.price = _price;
+        $.tokenToProduct[_tokenAddress] = product;
+
+        emit ProductUpdated(product);
+    }
+
+    function _updateProductTokenInfo(address _tokenAddress, IHederaTokenService.HederaToken memory tokenInfo) private {
+        int256 responseCode = _tokenAddress.updateTokenInfo(tokenInfo);
+        if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to update product token info");
+    }
+
+    function _updateProductTokenFees(address _tokenAddress, int64 _price) private {
+        (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.RoyaltyFee[] memory royaltyFees) =
+            _getProductFees(_price);
+        int256 responseCode = _tokenAddress.updateNonFungibleTokenCustomFees(fixedFees, royaltyFees);
+        if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to update product token fees");
+    }
 
     function _createProductToken(string calldata _name, string calldata _memo, int64 _price)
         internal
