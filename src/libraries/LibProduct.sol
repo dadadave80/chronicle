@@ -43,20 +43,20 @@ library LibProduct {
         ProductStorage storage $ = _productStorage();
         $.activeProducts.add(tokenAddress);
         Product memory product = Product({
-            id: uint24($.activeProducts.length()),
+            id: uint32($.activeProducts.length()),
             tokenAddress: tokenAddress,
             name: _name,
+            memo: _memo,
             price: _price,
             totalSupply: newTotalSupply,
             owner: sender,
             status: Status.Created,
-            timestamp: uint32(block.timestamp),
-            serialNumbers: serialNumbers
+            timestamp: uint40(block.timestamp)
         });
         $.tokenToProduct[tokenAddress] = product;
         $.supplierToProducts[sender].add(tokenAddress);
 
-        emit ProductCreated(product);
+        emit ProductCreated(product, serialNumbers);
     }
 
     // TODO: implement
