@@ -57,22 +57,22 @@ interface WalletInfo {
 }
 
 const mockAccount: UserAccount = {
-  id: "usr-001",
+  id: "usr-003",
   walletAddress: "0x742d35C8C3C4C30E6A0b1b5Db6e30f8A2D5E9B3F",
-  name: "John Doe",
-  email: "john.doe@example.com",
-  role: "Supplier",
+  name: "Adam Philip",
+  email: "adams@example.com",
+  role: "Transporter",
   isVerified: true,
   joinDate: "2024-01-15",
   avatar: "/api/placeholder/100/100",
-  bio: "Experienced supplier in the coffee industry with over 10 years of experience.",
-  company: "Coffee Masters Co.",
-  location: "Portland, OR",
+  bio: "Experienced transporter/delivery agent with over 10 years of experience.",
+  company: "Fedex Co.",
+  location: "Los Angeles, CA",
   phone: "+1-555-0123",
-  website: "https://coffeemasters.com",
+  website: "https://fedexco.com",
   socialLinks: {
-    twitter: "@coffeemasters",
-    linkedin: "coffee-masters-co",
+    twitter: "@fedex",
+    linkedin: "fedex-co",
   },
 };
 
@@ -98,28 +98,32 @@ const RoleCard = ({
 }) => (
   <div
     onClick={onSelect}
-    className={`p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${isSelected
+    className={`p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+      isSelected
         ? "border-gray-600 bg-gray-50"
         : "border-gray-200 hover:border-gray-300"
-      }`}
+    }`}
   >
     <div className="flex items-center space-x-3">
       <div
-        className={`p-3 rounded-lg ${isSelected ? "bg-gray-600 text-white" : "bg-gray-100 text-gray-600"
-          }`}
+        className={`p-3 rounded-lg ${
+          isSelected ? "bg-gray-600 text-white" : "bg-gray-100 text-gray-600"
+        }`}
       >
         <Icon className="w-6 h-6" />
       </div>
       <div>
         <h3
-          className={`font-semibold ${isSelected ? "text-gray-900" : "text-gray-800"
-            }`}
+          className={`font-semibold ${
+            isSelected ? "text-gray-900" : "text-gray-800"
+          }`}
         >
           {role}
         </h3>
         <p
-          className={`text-sm ${isSelected ? "text-gray-800" : "text-gray-600"
-            }`}
+          className={`text-sm ${
+            isSelected ? "text-gray-800" : "text-gray-600"
+          }`}
         >
           {description}
         </p>
@@ -273,10 +277,11 @@ export default function AccountPage() {
   }) => (
     <button
       onClick={() => setActiveTab(tabKey)}
-      className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === tabKey
+      className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+        activeTab === tabKey
           ? "bg-gray-800 text-gray-100"
           : "text-gray-600 hover:bg-gray-100"
-        }`}
+      }`}
     >
       <Icon className="w-4 h-4" />
       <span>{label}</span>
@@ -424,52 +429,26 @@ export default function AccountPage() {
                   <div>
                     <Label>Role in Chronify *</Label>
                     <div className="mt-2">
-                      {!isEditing ? (
-                        <div className="flex items-center space-x-3">
-                          <div className="p-3 bg-indigo-100 rounded-lg">
-                            {account.role === "Supplier" && (
-                              <MdBusiness className="w-6 h-6 text-gray-600" />
-                            )}
-                            {account.role === "Transporter" && (
-                              <MdLocalShipping className="w-6 h-6 text-gray-600" />
-                            )}
-                            {account.role === "Retailer" && (
-                              <MdStore className="w-6 h-6 text-gray-600" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-900">
-                              {account.role}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              {account.role === "Supplier" &&
-                                "Create and supply products"}
-                              {account.role === "Transporter" &&
-                                "Handle logistics and delivery"}
-                              {account.role === "Retailer" &&
-                                "Receive and sell products"}
-                            </p>
-                          </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="p-3 bg-indigo-100 rounded-lg">
+                          {account.role === "Transporter" && (
+                            <MdLocalShipping className="w-6 h-6 text-gray-600" />
+                          )}
                         </div>
-                      ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <RoleCard
-                            role="Supplier"
-                            icon={MdBusiness}
-                            description="Create and supply products"
-                            isSelected={editForm.role === "Supplier"}
-                            onSelect={() => handleRoleChange("Supplier")}
-                          />
-
-                          <RoleCard
-                            role="Retailer"
-                            icon={MdStore}
-                            description="Receive and sell products"
-                            isSelected={editForm.role === "Retailer"}
-                            onSelect={() => handleRoleChange("Retailer")}
-                          />
+                        <div>
+                          <p className="font-semibold text-gray-900">
+                            {account.role}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {account.role === "Supplier" &&
+                              "Create and supply products"}
+                            {account.role === "Transporter" &&
+                              "Handle logistics and delivery"}
+                            {account.role === "Retailer" &&
+                              "Receive and sell products"}
+                          </p>
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
 
