@@ -122,6 +122,66 @@ library LibProduct {
     }
 
     //*//////////////////////////////////////////////////////////////////////////
+    //                               VIEW FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*//
+    function _getProductByTokenAddress(address _tokenAddress) internal view returns (Product memory) {
+        return _productStorage().tokenToProduct[_tokenAddress];
+    }
+
+    function _getAllProductsTokenAddress() internal view returns (address[] memory) {
+        return _productStorage().activeProducts.values();
+    }
+
+    function _getAllProducts() internal view returns (Product[] memory products_) {
+        address[] memory tokenAddresses = _getAllProductsTokenAddress();
+        products_ = new Product[](tokenAddresses.length);
+        for (uint256 i; i < tokenAddresses.length; ++i) {
+            products_[i] = _getProductByTokenAddress(tokenAddresses[i]);
+        }
+    }
+
+    function _getProductsCount() internal view returns (uint256) {
+        return _productStorage().activeProducts.length();
+    }
+
+    // TODO: implement
+    // function _getProductsByPage(uint8 _page, uint8 _pageSize) internal view returns (Product[] memory products_) {
+    //     uint256 numOfProducts = _getNumberOfProducts();
+    //     if (_pageSize > numOfProducts) return _getAllProducts();
+    //     uint8 remNumOfProducts = uint8(numOfProducts % _pageSize);
+    //     uint8 rngNumOfProducts = uint8(numOfProducts - remNumOfProducts);
+    //     uint8 pages = rngNumOfProducts / _pageSize;
+    //     // products_ = (_page > pages) ?  ;
+
+    //     // uint256 startIndex = (_page - 1) * _pageSize;
+    //     // uint256 endIndex = _page * _pageSize;
+    //     // if (endIndex > numberOfProducts) endIndex = numberOfProducts;
+    //     // products_ = new Product[](endIndex - startIndex);
+    //     // for (uint256 i; i < endIndex - startIndex; ++i) {
+    //     //     products_[i] = _getProductByTokenAddress(_productStorage().activeProducts.at(startIndex + i));
+    //     // }
+    // }
+
+    function _getProductsByRange(uint8 _start, uint8 _end) internal view returns (Product[] memory products_) {
+        products_ = new Product[](_end - _start);
+        for (_start; _start < _end; ++_start) {
+            products_[_start] = _getProductByTokenAddress(_productStorage().activeProducts.at(_start));
+        }
+    }
+
+    function _getSupplierProductTokenAddresses(address _owner) internal view returns (address[] memory) {
+        return _productStorage().supplierToProducts[_owner].values();
+    }
+
+    function _getSupplierProducts(address _owner) internal view returns (Product[] memory products_) {
+        address[] memory tokenAddresses = _getSupplierProductTokenAddresses(_owner);
+        products_ = new Product[](tokenAddresses.length);
+        for (uint256 i; i < tokenAddresses.length; ++i) {
+            products_[i] = _getProductByTokenAddress(tokenAddresses[i]);
+        }
+    }
+
+    //*//////////////////////////////////////////////////////////////////////////
     //                             PRIVATE FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*//
     function _updateProductTokenInfo(address _tokenAddress, IHederaTokenService.HederaToken memory tokenInfo) private {
@@ -200,65 +260,5 @@ library LibProduct {
             useHbarsForPayment: true,
             feeCollector: address(this)
         });
-    }
-
-    //*//////////////////////////////////////////////////////////////////////////
-    //                               VIEW FUNCTIONS
-    //////////////////////////////////////////////////////////////////////////*//
-    function _getProductByTokenAddress(address _tokenAddress) internal view returns (Product memory) {
-        return _productStorage().tokenToProduct[_tokenAddress];
-    }
-
-    function _getAllProductsTokenAddress() internal view returns (address[] memory) {
-        return _productStorage().activeProducts.values();
-    }
-
-    function _getAllProducts() internal view returns (Product[] memory products_) {
-        address[] memory tokenAddresses = _getAllProductsTokenAddress();
-        products_ = new Product[](tokenAddresses.length);
-        for (uint256 i; i < tokenAddresses.length; ++i) {
-            products_[i] = _getProductByTokenAddress(tokenAddresses[i]);
-        }
-    }
-
-    function _getProductsCount() internal view returns (uint256) {
-        return _productStorage().activeProducts.length();
-    }
-
-    // TODO: implement
-    // function _getProductsByPage(uint8 _page, uint8 _pageSize) internal view returns (Product[] memory products_) {
-    //     uint256 numOfProducts = _getNumberOfProducts();
-    //     if (_pageSize > numOfProducts) return _getAllProducts();
-    //     uint8 remNumOfProducts = uint8(numOfProducts % _pageSize);
-    //     uint8 rngNumOfProducts = uint8(numOfProducts - remNumOfProducts);
-    //     uint8 pages = rngNumOfProducts / _pageSize;
-    //     // products_ = (_page > pages) ?  ;
-
-    //     // uint256 startIndex = (_page - 1) * _pageSize;
-    //     // uint256 endIndex = _page * _pageSize;
-    //     // if (endIndex > numberOfProducts) endIndex = numberOfProducts;
-    //     // products_ = new Product[](endIndex - startIndex);
-    //     // for (uint256 i; i < endIndex - startIndex; ++i) {
-    //     //     products_[i] = _getProductByTokenAddress(_productStorage().activeProducts.at(startIndex + i));
-    //     // }
-    // }
-
-    function _getProductsByRange(uint8 _start, uint8 _end) internal view returns (Product[] memory products_) {
-        products_ = new Product[](_end - _start);
-        for (_start; _start < _end; ++_start) {
-            products_[_start] = _getProductByTokenAddress(_productStorage().activeProducts.at(_start));
-        }
-    }
-
-    function _getSupplierProductTokenAddresses(address _owner) internal view returns (address[] memory) {
-        return _productStorage().supplierToProducts[_owner].values();
-    }
-
-    function _getSupplierProducts(address _owner) internal view returns (Product[] memory products_) {
-        address[] memory tokenAddresses = _getSupplierProductTokenAddresses(_owner);
-        products_ = new Product[](tokenAddresses.length);
-        for (uint256 i; i < tokenAddresses.length; ++i) {
-            products_[i] = _getProductByTokenAddress(tokenAddresses[i]);
-        }
     }
 }
