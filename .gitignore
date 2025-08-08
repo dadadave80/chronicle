@@ -20,6 +20,3 @@ docs/
 
 # MacOS files
 .DS_Store
-
-# Foundry
-remappings.txt
