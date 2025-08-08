@@ -13,13 +13,13 @@ export default function DashboardLayout({
   return (
     <div className=" bg-white lg:p-1.5">
       {/* Page Wrapper Start  */}
-      <div className="flex h-[100dvh] gap-1 overflow-hidden">
+      <div className="flex h-screen gap-1 overflow-hidden">
         {/* Sidebar Start */}
         <SideBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         {/* Sidebar End  */}
 
         {/* Content Area Start  */}
-        <div className="relative flex min-h-[100dvh] rounded-t-[8px] bg-white flex-1 border border-[#E5E7EB] flex-col justify-between overflow-y-auto overflow-x-hidden no-scrollbar">
+        <div className="relative flex min-h-screen rounded-t-[8px] bg-white flex-1 border border-[#E5E7EB] flex-col justify-between overflow-y-auto overflow-x-hidden no-scrollbar">
           <section>
             {/*  Header Start */}
             <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />

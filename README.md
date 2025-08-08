@@ -1,12 +1,13 @@
-# Chronicle/Chronify: Modular NFT‑Powered Supply Chain on Hedera
+# Chronify: Modular NFT‑Powered Supply Chain on Hedera
 
-> **A composable, upgradeable supply chain platform leveraging the Diamond Standard (EIP‑2535) and Hedera Token Service NFTs for end‑to‑end traceability.**
+> **Chronify is a composable, upgradeable supply chain platform leveraging the Diamond Standard (EIP‑2535) and Hedera Token Service NFTs for end‑to‑end traceability. It provides a transparent and immutable way to track products from origin to destination, ensuring accountability and reducing fraud.
+**
 
 ---
 
 ## Overview
 
-Chronicle is a modular smart contract system for supply chain management, built on the Hedera network. It employs the Diamond Standard (EIP‑2535) for upgradeable, facet‑based architecture, allowing seamless extension and maintenance. Core supply chain entities—**parties**, **products**, and **supply chain events**—are managed as distinct facets. The system integrates Hedera Token Service (HTS) to mint and transfer NFTs representing unique products, enabling secure, verifiable, and transparent asset tracking across the supply chain.
+Chronify is a modular smart contract system for supply chain management, built on the Hedera network. It employs the Diamond Standard (EIP‑2535) for upgradeable, facet‑based architecture, allowing seamless extension and maintenance. Core supply chain entities—**parties**, **products**, and **supply chain events**—are managed as distinct facets. The system integrates Hedera Token Service (HTS) to mint and transfer NFTs representing unique products, enabling secure, verifiable, and transparent asset tracking across the supply chain.
 
 By combining modularity, upgradeability, and HTS NFT integration, Chronicle delivers a robust foundation for traceable, compliant, and future‑proof supply chain solutions.
 
@@ -27,9 +28,8 @@ By combining modularity, upgradeability, and HTS NFT integration, Chronicle deli
 ## Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v16+ recommended)
+- [Node.js](https://nodejs.org/) (v18+ recommended)
 - [Solidity](https://docs.soliditylang.org/) 0.8+
-- [Hardhat](https://hardhat.org/)
 - [Hedera Token Service SDK](https://github.com/hashgraph/hedera-smart-contracts)
 - [Foundry](https://book.getfoundry.sh/) (optional, for advanced EVM tooling)
 
@@ -45,7 +45,7 @@ By combining modularity, upgradeability, and HTS NFT integration, Chronicle deli
    # or yarn
    ```
 3. **Configure network:**
-   - Update `hardhat.config.js` or `.env` with your Hedera RPC and credentials.
+   - Update `foundry.toml` or `.env` with your Hedera RPC and credentials.
 
 ---
 
@@ -123,12 +123,15 @@ ProductsFacet.updateProduct(tokenAddress, "Widget A+", "Batch 001A", 120);
 
 ---
 
+## Deployed Contracts
+- See [Deployed Contracts](./contract-addresses.md)
+
 ## Roadmap
 
-- [ ] Owner lookup and management
+- [x] Owner lookup and management
 - [ ] Compliance and audit workflows
-- [ ] UI front-end for supply chain visualization
-- [ ] Testnet deployment scripts
+- [x] UI front-end for supply chain visualization
+- [x] Testnet deployment scripts
 - [ ] Advanced analytics and reporting
 
 ---

@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Chronify
+
+Chronify is a decentralized supply chain management platform built on the Hedera network. It provides a transparent and immutable way to track products from origin to destination, ensuring accountability and reducing fraud.
+
+## Features
+
+*   **Product Tracking:** Register and track products throughout the supply chain.
+*   **Party Management:** Onboard and manage different parties involved in the supply chain (e.g., manufacturers, suppliers, distributors).
+*   **Real-time Analytics:** A comprehensive dashboard to visualize and analyze supply chain data.
+*   **Decentralized & Secure:** Built on the Hedera network for enhanced security and transparency.
+
+## Tech Stack
+
+*   **Frontend:** Next.js, TypeScript, Tailwind CSS
+*   **Smart Contracts:** Solidity, Foundry
+*   **Network:** Hedera
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+*   [Node.js](https://nodejs.org/en/) (v18 or later)
+*   [Foundry](https://getfoundry.sh/)
+
+### Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-username/chronify.git
+    cd chronify
+    ```
+
+2.  **Install frontend dependencies:**
+    ```bash
+    cd frontend
+    npm install
+    ```
+
+3.  **Install smart contract dependencies:**
+    ```bash
+    forge install
+    ```
+
+### Running the Application
+
+1.  **Start a local development node:**
+    ```bash
+    anvil
+    ```
+
+2.  **Start the frontend development server:**
+    ```bash
+    cd frontend
+    npm run dev
+    ```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+## Testing
+
+To run the smart contract tests, use the following command:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+forge test
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*   `frontend/`: Contains the Next.js frontend application.
+*   `src/`: Contains the Solidity smart contracts.
+*   `lib/`: Contains third-party libraries for the smart contracts.
