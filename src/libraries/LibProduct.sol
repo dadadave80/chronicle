@@ -128,7 +128,7 @@ library LibProduct {
     }
 
     function _createProductToken(string calldata _name, string calldata _memo, int64 _price)
-        internal
+        private
         returns (int256 createResponseCode_, address tokenAddress_)
     {
         (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.RoyaltyFee[] memory royaltyFees) =
@@ -138,7 +138,7 @@ library LibProduct {
     }
 
     function _mintProductToken(address _tokenAddress, int64 _initialSupply)
-        internal
+        private
         returns (int256 mintResponseCode_, int64 newTotalSupply_, int64[] memory serialNumbers_)
     {
         bytes[] memory metadata = new bytes[](0);
@@ -146,7 +146,7 @@ library LibProduct {
     }
 
     function _getProductToken(string calldata _name, string calldata _memo)
-        internal
+        private
         view
         returns (IHederaTokenService.HederaToken memory token_)
     {
@@ -157,7 +157,7 @@ library LibProduct {
         token_.tokenKeys = _getProductTokenKeys();
     }
 
-    function _getProductTokenKeys() internal view returns (IHederaTokenService.TokenKey[] memory tokenKeys_) {
+    function _getProductTokenKeys() private view returns (IHederaTokenService.TokenKey[] memory tokenKeys_) {
         tokenKeys_ = new IHederaTokenService.TokenKey[](7);
         tokenKeys_[0] = KeyType.ADMIN.getSingleKey(KeyValueType.CONTRACT_ID, address(this));
         tokenKeys_[1] = KeyType.KYC.getSingleKey(KeyValueType.CONTRACT_ID, address(this));
@@ -169,7 +169,7 @@ library LibProduct {
     }
 
     function _getProductFees(int64 _price)
-        internal
+        private
         view
         returns (IHederaTokenService.FixedFee[] memory fixedFees_, IHederaTokenService.RoyaltyFee[] memory royaltyFees_)
     {
