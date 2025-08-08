@@ -14,7 +14,6 @@ struct ProductStorage {
 }
 
 enum Status {
-    Created,
     ForSale,
     Sold,
     Shipped,
