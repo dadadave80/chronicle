@@ -338,7 +338,7 @@ const QuickActionButton = ({
 }) => (
   <button
     onClick={onClick}
-    className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+    className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 cursor-pointer ${
       variant === "primary"
         ? "bg-gray-900 text-gray-200 shadow-sm"
         : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
@@ -402,7 +402,7 @@ export default function UserDashboard() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mb-4"></div>
         <div className="text-gray-600 font-ibm font-medium">
           Loading Chronify Dashboard...
@@ -421,7 +421,7 @@ export default function UserDashboard() {
         <header className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 font-ibm">
+              <h1 className="md:text-3xl text-2xl font-bold text-gray-900 font-ibm">
                 Chronify Dashboard
               </h1>
               <p className="mt-2 text-gray-600 font-nunitoSans">
