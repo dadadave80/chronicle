@@ -21,6 +21,10 @@ contract ProductsFacet {
         _tokenAddress._increaseProductQuantity(_quantity);
     }
 
+    function decreaseProductQuantity(address _tokenAddress, int64 _quantity, int64[] memory _serialNumbers) external {
+        _tokenAddress._decreaseProductQuantity(_quantity, _serialNumbers);
+    }
+
     function getProductByTokenAddress(address _tokenAddress) public view returns (Product memory) {
         return _tokenAddress._getProductByTokenAddress();
     }
