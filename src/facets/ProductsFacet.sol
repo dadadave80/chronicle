@@ -17,6 +17,10 @@ contract ProductsFacet {
         _tokenAddress._updateProduct(_name, _memo, _price);
     }
 
+    function increaseProductQuantity(address _tokenAddress, int64 _quantity) external {
+        _tokenAddress._increaseProductQuantity(_quantity);
+    }
+
     function getProductByTokenAddress(address _tokenAddress) public view returns (Product memory) {
         return _tokenAddress._getProductByTokenAddress();
     }

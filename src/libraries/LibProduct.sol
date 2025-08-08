@@ -82,6 +82,23 @@ library LibProduct {
         emit ProductUpdated(product);
     }
 
+    function _increaseProductQuantity(address _tokenAddress, int64 _quantity) internal {
+        ProductStorage storage $ = _productStorage();
+        if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
+        if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
+        if ($.tokenToProduct[_tokenAddress].status != Status.Created) revert("Product sold");
+
+        (int256 mintResponseCode, int64 newTotalSupply, int64[] memory serialNumbers) =
+            _mintProductToken(_tokenAddress, _quantity);
+        if (mintResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to mint product");
+
+        Product memory product = $.tokenToProduct[_tokenAddress];
+        product.totalSupply = newTotalSupply;
+        $.tokenToProduct[_tokenAddress] = product;
+
+        emit ProductQuantityIncreased(product, serialNumbers);
+    }
+
     function _updateProductTokenInfo(address _tokenAddress, IHederaTokenService.HederaToken memory tokenInfo) private {
         int256 responseCode = _tokenAddress.updateTokenInfo(tokenInfo);
         if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to update product token info");
