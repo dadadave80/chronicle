@@ -18,11 +18,11 @@ abstract contract DeployedChronicleState is ChronicleDeployer {
     address[] public facetAddresses;
     string[5] public facetNames =
         ["DiamondCutFacet", "DiamondLoupeFacet", "OwnableRolesFacet", "PartiesFacet", "ProductsFacet"];
-    address public constant chronicleOwner = address(1337);
+    address public constant CHRONICLE_OWNER = address(1337);
 
     function setUp() public {
-        vm.startPrank(chronicleOwner);
-        chronicle = _deployChronicle(chronicleOwner);
+        vm.startPrank(CHRONICLE_OWNER);
+        chronicle = _deployChronicle(CHRONICLE_OWNER);
 
         diamondCutFacet = DiamondCutFacet(chronicle);
         diamondLoupeFacet = DiamondLoupeFacet(chronicle);

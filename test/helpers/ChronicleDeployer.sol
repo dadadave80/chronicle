@@ -25,7 +25,7 @@ abstract contract ChronicleDeployer is HelperContract {
         // deploy initializers
         MultiInit multiInit = new MultiInit();
         ERC165Init erc165Init = new ERC165Init();
-        InitHTCKeyTypes initHTCKeyTypes = new InitHTCKeyTypes();
+        InitHTCKeyTypes initHtcKeyTypes = new InitHTCKeyTypes();
 
         FacetCut[] memory facetCuts = new FacetCut[](5);
 
@@ -65,8 +65,8 @@ abstract contract ChronicleDeployer is HelperContract {
         initAddr[0] = address(erc165Init);
         initData[0] = abi.encodeWithSignature("initERC165()");
 
-        initAddr[1] = address(initHTCKeyTypes);
-        initData[1] = abi.encodeWithSignature("initHTCKeyTypes()");
+        initAddr[1] = address(initHtcKeyTypes);
+        initData[1] = abi.encodeWithSignature("initHtcKeyTypes()");
 
         DiamondArgs memory args = DiamondArgs({
             owner: _owner,
