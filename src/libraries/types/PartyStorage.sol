@@ -15,6 +15,7 @@ struct PartyStorage {
 }
 
 enum Role {
+    None,
     Supplier,
     Transporter,
     Retailer

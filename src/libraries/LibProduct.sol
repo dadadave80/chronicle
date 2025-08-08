@@ -3,23 +3,29 @@ pragma solidity 0.8.30;
 
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import {IHederaTokenService} from "hedera-token-service/IHederaTokenService.sol";
-import {HederaTokenService} from "hedera-token-service/HederaTokenService.sol";
-import {KeyHelper} from "hedera-token-service/KeyHelper.sol";
-import {HederaResponseCodes} from "hedera-system-contracts/HederaResponseCodes.sol";
-import {LibHederaTokenService} from "@chronicle/libraries/hts/LibHederaTokenService.sol";
+import {LibSafeHTS} from "@chronicle/libraries/hts/safe-hts/LibSafeHTS.sol";
 import {LibContext} from "@chronicle/libraries/LibContext.sol";
 import {Role} from "@chronicle-types/PartyStorage.sol";
 import {KeyType, KeyValueType} from "@chronicle-types/KeyHelperStorage.sol";
-import {Status, Product, ProductStorage, PRODUCT_STORAGE_SLOT} from "@chronicle-types/ProductStorage.sol";
+import {ProductStatus, Product, ProductStorage, PRODUCT_STORAGE_SLOT} from "@chronicle-types/ProductStorage.sol";
 import {LibParty} from "@chronicle/libraries/LibParty.sol";
 import {LibKeyHelper} from "@chronicle/libraries/hts/LibKeyHelper.sol";
+import {LibFeeHelper} from "@chronicle/libraries/hts/LibFeeHelper.sol";
+/// forge-lint: disable-next-line(unaliased-plain-import)
 import "@chronicle-logs/ProductLogs.sol";
+/// forge-lint: disable-next-line(unaliased-plain-import)
+import "@chronicle/libraries/errors/ProductErrors.sol";
+/// forge-lint: disable-next-line(unaliased-plain-import)
+import "@chronicle/libraries/errors/PartyErrors.sol";
+/// forge-lint: disable-next-line(unaliased-plain-import)
+import "@chronicle/libraries/errors/SupplyChainErrors.sol";
 
 library LibProduct {
     using LibParty for address;
     using LibKeyHelper for KeyType;
-    using LibHederaTokenService for IHederaTokenService.HederaToken;
-    using LibHederaTokenService for address;
+    using LibFeeHelper for int64;
+    using LibSafeHTS for address;
+    using LibSafeHTS for IHederaTokenService.HederaToken;
     using EnumerableSet for EnumerableSet.AddressSet;
 
     //*//////////////////////////////////////////////////////////////////////////
@@ -34,98 +40,119 @@ library LibProduct {
     //*//////////////////////////////////////////////////////////////////////////
     //                             INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*//
-    function _addProduct(string calldata _name, string calldata _memo, int64 _price, int64 _initialSupply) internal {
-        address sender = LibContext._msgSender();
-        if (!sender._hasActiveRole(Role.Supplier)) revert("Not a Supplier");
+    function _addProduct(
+        string calldata _name,
+        string calldata _memo,
+        int64 _price,
+        int64 _transporterFee,
+        int64 _initialSupply
+    ) internal {
+        address supplier = LibContext._msgSender();
+        if (!supplier._hasActiveRole(Role.Supplier)) revert NotSupplier(supplier);
 
-        (int256 createResponseCode, address tokenAddress) = _createProductToken(_name, _memo, _price);
-        if (createResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to create product");
-        if (tokenAddress == address(0)) revert("Invalid token address");
+        address productToken = _createProductToken(_name, _memo, _price, _transporterFee, _initialSupply);
+        if (productToken == address(0)) revert InvalidTokenAddress();
 
-        (int256 mintResponseCode, int64 newTotalSupply, int64[] memory serialNumbers) =
-            _mintProductToken(tokenAddress, _initialSupply);
-        if (mintResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to mint product");
+        productToken.safeAssociateToken(supplier);
+
+        int64 newTotalSupply = _mintProductToken(productToken, _initialSupply);
 
         ProductStorage storage $ = _productStorage();
-        $.activeProducts.add(tokenAddress);
+        $.activeProducts.add(productToken);
         Product memory product = Product({
             id: uint32($.activeProducts.length()),
-            tokenAddress: tokenAddress,
+            tokenAddress: productToken,
             name: _name,
             memo: _memo,
             price: _price,
+            transportFee: _transporterFee,
             totalSupply: newTotalSupply,
-            owner: sender,
-            status: Status.Created,
-            timestamp: uint40(block.timestamp)
+            supplier: supplier,
+            status: ProductStatus.ForSale,
+            created: uint40(block.timestamp),
+            updated: uint40(block.timestamp)
         });
-        $.tokenToProduct[tokenAddress] = product;
-        $.supplierToProducts[sender].add(tokenAddress);
+        $.tokenToProduct[productToken] = product;
+        $.supplierToProducts[supplier].add(productToken);
 
-        emit ProductCreated(product, serialNumbers);
+        emit ProductCreated(product);
     }
 
-    function _updateProduct(address _tokenAddress, string calldata _name, string calldata _memo, int64 _price)
-        internal
-    {
+    function _updateProduct(
+        address _productToken,
+        string calldata _name,
+        string calldata _memo,
+        int64 _price,
+        int64 _transporterFee
+    ) internal {
+        if (_productToken == address(0)) revert InvalidTokenAddress();
+
         ProductStorage storage $ = _productStorage();
-        if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
-        if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
-        if (
-            $.tokenToProduct[_tokenAddress].status != Status.Created
-                || $.tokenToProduct[_tokenAddress].status != Status.ForSale
-        ) revert("Product sold");
+        if (!$.activeProducts.contains(_productToken)) revert ProductInactive(_productToken);
+        if ($.tokenToProduct[_productToken].supplier != LibContext._msgSender()) {
+            revert NotSupplier($.tokenToProduct[_productToken].supplier);
+        }
+        if ($.tokenToProduct[_productToken].status != ProductStatus.ForSale) revert ProductSold(_productToken);
 
-        _updateProductTokenInfo(_tokenAddress, _getProductToken(_name, _memo));
-        _updateProductTokenFees(_tokenAddress, _price);
+        _productToken.safeUpdateTokenInfo(_getProductToken(_name, _memo));
+        _productToken.safeUpdateTokenKeys(_getProductTokenKeys());
+        _updateProductToken(_productToken, _price, _transporterFee);
 
-        Product memory product = $.tokenToProduct[_tokenAddress];
+        Product memory product = $.tokenToProduct[_productToken];
         product.name = _name;
         product.memo = _memo;
         product.price = _price;
-        $.tokenToProduct[_tokenAddress] = product;
+        product.transportFee = _transporterFee;
+        product.updated = uint40(block.timestamp);
+        $.tokenToProduct[_productToken] = product;
 
         emit ProductUpdated(product);
     }
 
-    function _increaseProductQuantity(address _tokenAddress, int64 _quantity) internal {
+    function _increaseProductQuantity(address _productToken, int64 _quantity) internal {
+        if (_productToken == address(0)) revert InvalidTokenAddress();
+
         ProductStorage storage $ = _productStorage();
-        if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
-        if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
-        if ($.tokenToProduct[_tokenAddress].status != Status.Created) revert("Product sold");
+        if (!$.activeProducts.contains(_productToken)) revert ProductInactive(_productToken);
+        if ($.tokenToProduct[_productToken].supplier != LibContext._msgSender()) {
+            revert NotSupplier($.tokenToProduct[_productToken].supplier);
+        }
+        if ($.tokenToProduct[_productToken].status != ProductStatus.ForSale) revert ProductSold(_productToken);
 
-        (int256 mintResponseCode, int64 newTotalSupply, int64[] memory serialNumbers) =
-            _mintProductToken(_tokenAddress, _quantity);
-        if (mintResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to mint product");
+        int64 newTotalSupply = _mintProductToken(_productToken, _quantity);
 
-        Product memory product = $.tokenToProduct[_tokenAddress];
+        Product memory product = $.tokenToProduct[_productToken];
         product.totalSupply = newTotalSupply;
-        $.tokenToProduct[_tokenAddress] = product;
+        $.tokenToProduct[_productToken] = product;
 
-        emit ProductQuantityIncreased(product, serialNumbers);
+        emit ProductQuantityIncreased(product);
     }
 
-    function _decreaseProductQuantity(address _tokenAddress, int64 _quantity, int64[] memory _serialNumbers) internal {
+    function _decreaseProductQuantity(address _productToken, int64 _quantity) internal {
+        if (_productToken == address(0)) revert InvalidTokenAddress();
+
         ProductStorage storage $ = _productStorage();
-        if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
-        if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
-        if ($.tokenToProduct[_tokenAddress].status != Status.Created) revert("Product sold");
+        if (!$.activeProducts.contains(_productToken)) revert ProductInactive(_productToken);
+        if ($.tokenToProduct[_productToken].supplier != LibContext._msgSender()) {
+            revert NotSupplier($.tokenToProduct[_productToken].supplier);
+        }
+        if ($.tokenToProduct[_productToken].status != ProductStatus.ForSale) revert ProductSold(_productToken);
 
-        (int256 burnResponseCode, int64 newTotalSupply) = _tokenAddress.burnToken(_quantity, _serialNumbers);
-        if (burnResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to burn product");
+        int64[] memory serialNumbers;
+        int64 newTotalSupply = _productToken.safeBurnToken(_quantity, serialNumbers);
 
-        Product memory product = $.tokenToProduct[_tokenAddress];
+        Product memory product = $.tokenToProduct[_productToken];
         product.totalSupply = newTotalSupply;
-        $.tokenToProduct[_tokenAddress] = product;
+        $.tokenToProduct[_productToken] = product;
 
-        emit ProductQuantityDecreased(product, _serialNumbers);
+        emit ProductQuantityDecreased(product);
     }
 
     //*//////////////////////////////////////////////////////////////////////////
     //                               VIEW FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*//
-    function _getProductByTokenAddress(address _tokenAddress) internal view returns (Product memory) {
-        return _productStorage().tokenToProduct[_tokenAddress];
+    function _getProductByTokenAddress(address _productToken) internal view returns (Product memory) {
+        return _productStorage().tokenToProduct[_productToken];
     }
 
     function _getAllProductsTokenAddress() internal view returns (address[] memory) {
@@ -169,12 +196,12 @@ library LibProduct {
         }
     }
 
-    function _getSupplierProductTokenAddresses(address _owner) internal view returns (address[] memory) {
-        return _productStorage().supplierToProducts[_owner].values();
+    function _getSupplierProductTokenAddresses(address _supplier) internal view returns (address[] memory) {
+        return _productStorage().supplierToProducts[_supplier].values();
     }
 
-    function _getSupplierProducts(address _owner) internal view returns (Product[] memory products_) {
-        address[] memory tokenAddresses = _getSupplierProductTokenAddresses(_owner);
+    function _getSupplierProducts(address _supplier) internal view returns (Product[] memory products_) {
+        address[] memory tokenAddresses = _getSupplierProductTokenAddresses(_supplier);
         products_ = new Product[](tokenAddresses.length);
         for (uint256 i; i < tokenAddresses.length; ++i) {
             products_[i] = _getProductByTokenAddress(tokenAddresses[i]);
@@ -184,34 +211,49 @@ library LibProduct {
     //*//////////////////////////////////////////////////////////////////////////
     //                             PRIVATE FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*//
-    function _updateProductTokenInfo(address _tokenAddress, IHederaTokenService.HederaToken memory tokenInfo) private {
-        int256 responseCode = _tokenAddress.updateTokenInfo(tokenInfo);
-        if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to update product token info");
+    function _createProductToken(
+        string calldata _name,
+        string calldata _memo,
+        int64 _price,
+        int64 _transporterFee,
+        int64 _initialSupply
+    ) private returns (address) {
+        (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.FractionalFee[] memory fractionalFee) =
+            _getProductFees(_price, _transporterFee);
+        address productToken = _getProductToken(_name, _memo).safeCreateFungibleTokenWithCustomFees(
+            _initialSupply, 0, fixedFees, fractionalFee
+        );
+        return productToken;
     }
 
-    function _updateProductTokenFees(address _tokenAddress, int64 _price) private {
-        (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.RoyaltyFee[] memory royaltyFees) =
-            _getProductFees(_price);
-        int256 responseCode = _tokenAddress.updateNonFungibleTokenCustomFees(fixedFees, royaltyFees);
-        if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to update product token fees");
+    function _mintProductToken(address _productToken, int64 _initialSupply) private returns (int64) {
+        bytes[] memory metadata;
+        (int64 newTotalSupply,) = _productToken.safeMintToken(_initialSupply, metadata);
+        return newTotalSupply;
     }
 
-    function _createProductToken(string calldata _name, string calldata _memo, int64 _price)
+    function _updateProductToken(address _productToken, int64 _price, int64 _transporterFee) private {
+        (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.FractionalFee[] memory fractionalFees) =
+            _getProductFees(_price, _transporterFee);
+
+        _productToken.safeUpdateFungibleTokenCustomFees(fixedFees, fractionalFees);
+    }
+
+    function _getProductFees(int64 _price, int64 _transporterFee)
         private
-        returns (int256 createResponseCode_, address tokenAddress_)
+        view
+        returns (
+            IHederaTokenService.FixedFee[] memory fixedFees_,
+            IHederaTokenService.FractionalFee[] memory fractionalFee_
+        )
     {
-        (IHederaTokenService.FixedFee[] memory fixedFees, IHederaTokenService.RoyaltyFee[] memory royaltyFees) =
-            _getProductFees(_price);
-        (createResponseCode_, tokenAddress_) =
-            _getProductToken(_name, _memo).createNonFungibleTokenWithCustomFees(fixedFees, royaltyFees);
-    }
-
-    function _mintProductToken(address _tokenAddress, int64 _initialSupply)
-        private
-        returns (int256 mintResponseCode_, int64 newTotalSupply_, int64[] memory serialNumbers_)
-    {
-        bytes[] memory metadata = new bytes[](0);
-        (mintResponseCode_, newTotalSupply_, serialNumbers_) = _tokenAddress.mintToken(_initialSupply, metadata);
+        fixedFees_ = new IHederaTokenService.FixedFee[](2);
+        // supplier fee
+        fixedFees_[0] = _price.createFixedFeeForHbars(LibContext._msgSender());
+        // transporter fee
+        fixedFees_[1] = _transporterFee.createFixedFeeForHbars(LibContext._msgSender());
+        // 1% platform fee
+        fractionalFee_ = LibFeeHelper.createSingleFractionalFee(100, 10000, false, address(this));
     }
 
     function _getProductToken(string calldata _name, string calldata _memo)
@@ -235,30 +277,5 @@ library LibProduct {
         tokenKeys_[4] = KeyType.SUPPLY.getSingleKey(KeyValueType.CONTRACT_ID, address(this));
         tokenKeys_[5] = KeyType.FEE.getSingleKey(KeyValueType.CONTRACT_ID, address(this));
         tokenKeys_[6] = KeyType.PAUSE.getSingleKey(KeyValueType.CONTRACT_ID, address(this));
-    }
-
-    function _getProductFees(int64 _price)
-        private
-        view
-        returns (IHederaTokenService.FixedFee[] memory fixedFees_, IHederaTokenService.RoyaltyFee[] memory royaltyFees_)
-    {
-        fixedFees_ = new IHederaTokenService.FixedFee[](1);
-        fixedFees_[0] = IHederaTokenService.FixedFee({
-            amount: _price,
-            tokenId: address(0),
-            useHbarsForPayment: true,
-            useCurrentTokenForPayment: false,
-            feeCollector: address(this)
-        });
-
-        royaltyFees_ = new IHederaTokenService.RoyaltyFee[](1);
-        royaltyFees_[0] = IHederaTokenService.RoyaltyFee({
-            numerator: 1,
-            denominator: 1000,
-            amount: _price,
-            tokenId: address(0),
-            useHbarsForPayment: true,
-            feeCollector: address(this)
-        });
     }
 }

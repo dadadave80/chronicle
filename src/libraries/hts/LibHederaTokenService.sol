@@ -11,9 +11,7 @@ library LibHederaTokenService {
     int32 private constant DEFAULT_AUTO_RENEW_PERIOD = 7776000;
 
     modifier nonEmptyExpiry(IHederaTokenService.HederaToken memory token) {
-        if (token.expiry.second == 0 && token.expiry.autoRenewPeriod == 0) {
-            token.expiry.autoRenewPeriod = DEFAULT_AUTO_RENEW_PERIOD;
-        }
+        _nonEmptyExpiry(token);
         _;
     }
 
@@ -347,6 +345,7 @@ library LibHederaTokenService {
     /// @param to The account address of the receiver of `serialNumber`
     /// @param serialNumber The NFT serial number to transfer
     /// @return responseCode The response code for the status of the request. SUCCESS is 22.
+    /// forge-lint: disable-next-line(mixed-case-function)
     function transferFromNFT(address token, address from, address to, uint256 serialNumber)
         external
         returns (int64 responseCode)
@@ -379,6 +378,7 @@ library LibHederaTokenService {
     /// @param approved The new approved NFT controller.  To revoke approvals pass in the zero address.
     /// @param serialNumber The NFT serial number  to approve
     /// @return responseCode The response code for the status of the request. SUCCESS is 22.
+    /// forge-lint: disable-next-line(mixed-case-function)
     function approveNFT(address token, address approved, uint256 serialNumber) internal returns (int256 responseCode) {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.approveNFT.selector, token, approved, serialNumber)
@@ -551,6 +551,7 @@ library LibHederaTokenService {
     /// @param sender the sender of an nft
     /// @param receiver the receiver of the nft sent by the same index at sender
     /// @param serialNumber the serial number of the nft sent by the same index at sender
+    /// forge-lint: disable-next-line(mixed-case-function)
     function transferNFTs(
         address token,
         address[] memory sender,
@@ -587,6 +588,7 @@ library LibHederaTokenService {
     /// @param sender The sender for the transaction
     /// @param receiver The receiver of the transaction
     /// @param serialNumber The serial number of the NFT to transfer.
+    /// forge-lint: disable-next-line(mixed-case-function)
     function transferNFT(address token, address sender, address receiver, int64 serialNumber)
         internal
         returns (int256 responseCode)
@@ -632,6 +634,7 @@ library LibHederaTokenService {
     /// @param account The account address to revoke kyc
     /// @param  serialNumbers The serial numbers of token to wipe
     /// @return responseCode The response code for the status of the request. SUCCESS is 22.
+    /// forge-lint: disable-next-line(mixed-case-function)
     function wipeTokenAccountNFT(address token, address account, int64[] memory serialNumbers)
         internal
         returns (int256 responseCode)
@@ -800,5 +803,11 @@ library LibHederaTokenService {
             )
         );
         responseCode = success ? abi.decode(result, (int32)) : HederaResponseCodes.UNKNOWN;
+    }
+
+    function _nonEmptyExpiry(IHederaTokenService.HederaToken memory token) internal pure {
+        if (token.expiry.second == 0 && token.expiry.autoRenewPeriod == 0) {
+            token.expiry.autoRenewPeriod = DEFAULT_AUTO_RENEW_PERIOD;
+        }
     }
 }
