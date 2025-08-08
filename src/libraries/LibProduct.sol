@@ -58,7 +58,7 @@ library LibProduct {
             price: _price,
             totalSupply: newTotalSupply,
             owner: sender,
-            status: Status.Created,
+            status: Status.ForSale,
             timestamp: uint40(block.timestamp)
         });
         $.tokenToProduct[tokenAddress] = product;
@@ -73,10 +73,7 @@ library LibProduct {
         ProductStorage storage $ = _productStorage();
         if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
         if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
-        if (
-            $.tokenToProduct[_tokenAddress].status != Status.Created
-                || $.tokenToProduct[_tokenAddress].status != Status.ForSale
-        ) revert("Product sold");
+        if ($.tokenToProduct[_tokenAddress].status != Status.ForSale) revert("Product sold");
 
         _updateProductTokenInfo(_tokenAddress, _getProductToken(_name, _memo));
         _updateProductTokenFees(_tokenAddress, _price);
@@ -94,7 +91,7 @@ library LibProduct {
         ProductStorage storage $ = _productStorage();
         if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
         if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
-        if ($.tokenToProduct[_tokenAddress].status != Status.Created) revert("Product sold");
+        if ($.tokenToProduct[_tokenAddress].status != Status.ForSale) revert("Product sold");
 
         (int64 newTotalSupply, int64[] memory serialNumbers) = _mintProductToken(_tokenAddress, _quantity);
 
@@ -109,7 +106,7 @@ library LibProduct {
         ProductStorage storage $ = _productStorage();
         if (!$.activeProducts.contains(_tokenAddress)) revert("Invalid token address");
         if ($.tokenToProduct[_tokenAddress].owner != LibContext._msgSender()) revert("Not the owner");
-        if ($.tokenToProduct[_tokenAddress].status != Status.Created) revert("Product sold");
+        if ($.tokenToProduct[_tokenAddress].status != Status.ForSale) revert("Product sold");
 
         (int256 burnResponseCode, int64 newTotalSupply) = _tokenAddress.burnToken(_quantity, _serialNumbers);
         if (burnResponseCode != HederaResponseCodes.SUCCESS) revert("Failed to burn product");
