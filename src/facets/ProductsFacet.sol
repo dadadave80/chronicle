@@ -37,6 +37,14 @@ contract ProductsFacet {
         return LibProduct._getAllProducts();
     }
 
+    function getProductsCount() public view returns (uint256) {
+        return LibProduct._getProductsCount();
+    }
+
+    function getProductsByRange(uint8 _start, uint8 _end) public view returns (Product[] memory) {
+        return LibProduct._getProductsByRange(_start, _end);
+    }
+
     function getSupplierProductTokenAddresses(address _owner) public view returns (address[] memory) {
         return _owner._getSupplierProductTokenAddresses();
     }
