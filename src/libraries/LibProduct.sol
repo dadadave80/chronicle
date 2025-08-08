@@ -22,12 +22,18 @@ library LibProduct {
     using LibHederaTokenService for address;
     using EnumerableSet for EnumerableSet.AddressSet;
 
+    //*//////////////////////////////////////////////////////////////////////////
+    //                                  STORAGE
+    ////////////////////////////////////////////////////////////////////////////*/
     function _productStorage() internal pure returns (ProductStorage storage pds_) {
         assembly {
             pds_.slot := PRODUCT_STORAGE_SLOT
         }
     }
 
+    //*//////////////////////////////////////////////////////////////////////////
+    //                             EXTERNAL FUNCTIONS
+    ////////////////////////////////////////////////////////////////////////////*/
     function _addProduct(string calldata _name, string calldata _memo, int64 _price, int64 _initialSupply) internal {
         address sender = LibContext._msgSender();
         if (!sender._hasActiveRole(Role.Supplier)) revert("Not a Supplier");
@@ -115,6 +121,9 @@ library LibProduct {
         emit ProductQuantityDecreased(product, _serialNumbers);
     }
 
+    //*//////////////////////////////////////////////////////////////////////////
+    //                             PRIVATE FUNCTIONS
+    ////////////////////////////////////////////////////////////////////////////*/
     function _updateProductTokenInfo(address _tokenAddress, IHederaTokenService.HederaToken memory tokenInfo) private {
         int256 responseCode = _tokenAddress.updateTokenInfo(tokenInfo);
         if (responseCode != HederaResponseCodes.SUCCESS) revert("Failed to update product token info");
@@ -193,6 +202,9 @@ library LibProduct {
         });
     }
 
+    //*//////////////////////////////////////////////////////////////////////////
+    //                               VIEW FUNCTIONS
+    ////////////////////////////////////////////////////////////////////////////*/
     function _getProductByTokenAddress(address _tokenAddress) internal view returns (Product memory) {
         return _productStorage().tokenToProduct[_tokenAddress];
     }
