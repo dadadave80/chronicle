@@ -3,7 +3,7 @@ import { GoHome, GoGear } from "react-icons/go";
 import {
   MdOutlineInventory,
   MdOutlineLocalShipping,
-  MdOutlineAnalytics,
+  MdDeliveryDining,
 } from "react-icons/md";
 
 export const SideBarLinks: SideBarLinksTypes[] = [
@@ -23,9 +23,9 @@ export const SideBarLinks: SideBarLinksTypes[] = [
     icon: <MdOutlineLocalShipping className="w-[20px] h-[20px]" />,
   },
   {
-    href: "/dashboard/analytics",
-    title: "Analytics",
-    icon: <MdOutlineAnalytics className="w-[20px] h-[20px]" />,
+    href: "/dashboard/delivery",
+    title: "Delivery",
+    icon: <MdDeliveryDining className="w-[20px] h-[20px]" />,
   },
   {
     href: "/dashboard/account",

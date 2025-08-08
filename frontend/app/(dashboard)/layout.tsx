@@ -41,3 +41,5 @@ export default function DashboardLayout({
     </div>
   );
 }
+
+// Then let `/dashboard/account` be for account managment. So chronify is a dApp so let the account management page be well structure. On registration, the user connect wallet, enters his/her name and then choose role (supplier, transporter, retailer).
