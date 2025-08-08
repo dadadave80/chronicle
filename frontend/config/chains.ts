@@ -21,6 +21,27 @@ export const hederaTestnet = defineChain({
   },
 });
 
+export const hederaPreviewnet = defineChain({
+  id: 297,
+  name: "Hedera Previewnet",
+  nativeCurrency: {
+    name: "HBAR",
+    symbol: "HBAR",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://previewnet.hashio.io/api"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "HashScan",
+      url: "https://hashscan.io/previewnet",
+    },
+  },
+});
+
 export const hederaMainnet = defineChain({
   id: 295,
   name: "Hedera Mainnet",

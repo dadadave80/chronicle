@@ -5,7 +5,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createAppKit } from "@reown/appkit/react";
 import React, { type ReactNode } from "react";
 import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
-import { hederaMainnet, hederaTestnet } from "@/config/chains";
+import {
+  hederaMainnet,
+  hederaPreviewnet,
+  hederaTestnet,
+} from "@/config/chains";
 
 // Set up queryClient
 const queryClient = new QueryClient();
@@ -31,8 +35,8 @@ const metadata = {
 createAppKit({
   adapters: [wagmiAdapter],
   projectId,
-  networks: [hederaMainnet, hederaTestnet],
-  defaultNetwork: hederaTestnet,
+  networks: [hederaMainnet, hederaTestnet, hederaPreviewnet],
+  defaultNetwork: hederaPreviewnet,
   metadata: metadata,
   features: {
     analytics: true,
