@@ -18,6 +18,7 @@ library LibSafeHTS {
     error MultipleDissociationsFailed();
     error SingleDissociationFailed();
     error TokensTransferFailed();
+    error TokensTransferFromFailed();
     error NFTsTransferFailed();
     error TokenTransferFailed();
     error NFTTransferFailed();
@@ -40,6 +41,7 @@ library LibSafeHTS {
     error UpdateTokenInfoFailed();
     error UpdateTokenExpiryInfoFailed();
     error UpdateTokenKeysFailed();
+    error UpdateTokenCustomFeesFailed();
 
     function safeCryptoTransfer(
         IHederaTokenService.TransferList memory transferList,
@@ -130,6 +132,13 @@ library LibSafeHTS {
             abi.encodeWithSelector(IHederaTokenService.transferToken.selector, token, sender, receiver, amount)
         );
         if (!tryDecodeSuccessResponseCode(success, result)) revert TokenTransferFailed();
+    }
+
+    function safeTransferFromToken(address token, address from, address to, int64 amount) internal {
+        (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
+            abi.encodeWithSelector(IHederaTokenService.transferFrom.selector, token, from, to, amount)
+        );
+        if (!tryDecodeSuccessResponseCode(success, result)) revert TokensTransferFromFailed();
     }
 
     /// forge-lint: disable-next-line(mixed-case-function)
@@ -310,6 +319,19 @@ library LibSafeHTS {
         (bool success, bytes memory result) =
             PRECOMPILE_ADDRESS.call(abi.encodeWithSelector(IHederaTokenService.updateTokenKeys.selector, token, keys));
         if (!tryDecodeSuccessResponseCode(success, result)) revert UpdateTokenKeysFailed();
+    }
+
+    function safeUpdateFungibleTokenCustomFees(
+        address token,
+        IHederaTokenService.FixedFee[] memory fixedFees,
+        IHederaTokenService.FractionalFee[] memory fractionalFees
+    ) internal {
+        (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
+            abi.encodeWithSelector(
+                IHederaTokenService.updateFungibleTokenCustomFees.selector, token, fixedFees, fractionalFees
+            )
+        );
+        if (!tryDecodeSuccessResponseCode(success, result)) revert UpdateTokenCustomFeesFailed();
     }
 
     function tryDecodeSuccessResponseCode(bool success, bytes memory result) private pure returns (bool) {
