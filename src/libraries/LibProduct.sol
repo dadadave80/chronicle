@@ -197,12 +197,12 @@ library LibProduct {
         return _productStorage().tokenToProduct[_tokenAddress];
     }
 
-    function _getAllProductTokenAddresses() internal view returns (address[] memory) {
+    function _getAllProductsTokenAddress() internal view returns (address[] memory) {
         return _productStorage().activeProducts.values();
     }
 
     function _getAllProducts() internal view returns (Product[] memory products_) {
-        address[] memory tokenAddresses = _getAllProductTokenAddresses();
+        address[] memory tokenAddresses = _getAllProductsTokenAddress();
         products_ = new Product[](tokenAddresses.length);
         for (uint256 i; i < tokenAddresses.length; ++i) {
             products_[i] = _getProductByTokenAddress(tokenAddresses[i]);

@@ -29,8 +29,8 @@ contract ProductsFacet {
         return _tokenAddress._getProductByTokenAddress();
     }
 
-    function getAllProductTokenAddresses() public view returns (address[] memory) {
-        return LibProduct._getAllProductTokenAddresses();
+    function getAllProductsTokenAddress() public view returns (address[] memory) {
+        return LibProduct._getAllProductsTokenAddress();
     }
 
     function getAllProducts() public view returns (Product[] memory) {
