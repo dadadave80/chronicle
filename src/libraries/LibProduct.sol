@@ -8,7 +8,9 @@ import {LibHederaTokenService} from "@chronicle/libraries/hts/LibHederaTokenServ
 import {LibContext} from "@chronicle/libraries/LibContext.sol";
 import {Role} from "@chronicle-types/PartyStorage.sol";
 import {KeyType, KeyValueType} from "@chronicle-types/KeyHelperStorage.sol";
-import {Status, Product, ProductStorage, PRODUCT_STORAGE_SLOT} from "@chronicle-types/ProductStorage.sol";
+import {
+    Status, Product, ProductStorage, PRODUCT_STORAGE_SLOT, USDC_ADDRESS
+} from "@chronicle-types/ProductStorage.sol";
 import {LibParty} from "@chronicle/libraries/LibParty.sol";
 import {LibKeyHelper} from "@chronicle/libraries/hts/LibKeyHelper.sol";
 import {LibFeeHelper} from "@chronicle/libraries/hts/LibFeeHelper.sol";
