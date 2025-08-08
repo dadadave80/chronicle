@@ -28,9 +28,7 @@ library LibProduct {
         }
     }
 
-    function _createProduct(string calldata _name, string calldata _memo, int64 _price, int64 _initialSupply)
-        internal
-    {
+    function _addProduct(string calldata _name, string calldata _memo, int64 _price, int64 _initialSupply) internal {
         address sender = LibContext._msgSender();
         if (!sender._hasActiveRole(Role.Supplier)) revert("Not a Supplier");
 
