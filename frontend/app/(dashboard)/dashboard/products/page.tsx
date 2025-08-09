@@ -30,6 +30,7 @@ import { useState, useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import useAddProduct from "@/hooks/useAddProduct";
 
 // Zod validation schema
 const productSchema = z.object({
@@ -276,11 +277,10 @@ const StatCard = ({
       </div>
       {change && (
         <div
-          className={`flex items-center space-x-1 px-2 py-1 rounded-full text-sm font-medium ${
-            changeType === "up"
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
+          className={`flex items-center space-x-1 px-2 py-1 rounded-full text-sm font-medium ${changeType === "up"
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+            }`}
         >
           {changeType === "up" ? (
             <MdTrendingUp className="w-4 h-4" />
@@ -345,6 +345,8 @@ export default function ProductsPage() {
     "date",
   );
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
+  const [transporterFees, setTransporterFees] = useState<number>(1);
 
   // React Hook Form setup
   const {
@@ -435,10 +437,13 @@ export default function ProductsPage() {
     return filtered;
   }, [products, searchTerm, filterStatus, filterCategory, sortBy, sortOrder]);
 
+
+  const { addProduct } = useAddProduct();
+
   const onSubmit = async (data: ProductFormData) => {
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await addProduct(data.name, data.category, data.price, transporterFees, data.quantity);
 
       const newProduct: Product = {
         id: `PROD-${String(products.length + 1).padStart(3, "0")}`,
@@ -651,11 +656,10 @@ export default function ProductsPage() {
                         setSortOrder("asc");
                       }
                     }}
-                    className={`px-3 py-1 rounded-md cursor-pointer text-sm font-medium transition-colors ${
-                      sortBy === option
-                        ? "bg-gray-800 text-gray-200"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
+                    className={`px-3 py-1 rounded-md cursor-pointer text-sm font-medium transition-colors ${sortBy === option
+                      ? "bg-gray-800 text-gray-200"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
                   >
                     {option.charAt(0).toUpperCase() + option.slice(1)}
                     {sortBy === option && (
@@ -818,8 +822,8 @@ export default function ProductsPage() {
               </h3>
               <p className="text-gray-500">
                 {searchTerm ||
-                filterStatus !== "all" ||
-                filterCategory !== "all"
+                  filterStatus !== "all" ||
+                  filterCategory !== "all"
                   ? "Try adjusting your search and filter criteria"
                   : "Get started by adding your first product"}
               </p>
@@ -881,9 +885,8 @@ export default function ProductsPage() {
                     <input
                       {...register("name")}
                       type="text"
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-colors ${
-                        errors.name ? "border-red-300" : "border-gray-300"
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-colors ${errors.name ? "border-red-300" : "border-gray-300"
+                        }`}
                       placeholder="Enter product name"
                     />
                     {errors.name && (
@@ -901,9 +904,8 @@ export default function ProductsPage() {
                     </label>
                     <select
                       {...register("category")}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${
-                        errors.category ? "border-red-300" : "border-gray-300"
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.category ? "border-red-300" : "border-gray-300"
+                        }`}
                     >
                       <option value="">Select category</option>
                       {categories.map((cat) => (
@@ -930,9 +932,8 @@ export default function ProductsPage() {
                       type="number"
                       step="0.01"
                       min="0"
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${
-                        errors.price ? "border-red-300" : "border-gray-300"
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.price ? "border-red-300" : "border-gray-300"
+                        }`}
                       placeholder="0.00"
                     />
                     {errors.price && (
@@ -952,9 +953,8 @@ export default function ProductsPage() {
                       {...register("quantity", { valueAsNumber: true })}
                       type="number"
                       min="1"
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${
-                        errors.quantity ? "border-red-300" : "border-gray-300"
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.quantity ? "border-red-300" : "border-gray-300"
+                        }`}
                       placeholder="1"
                     />
                     {errors.quantity && (
@@ -972,11 +972,10 @@ export default function ProductsPage() {
                     </label>
                     <select
                       {...register("transporter")}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${
-                        errors.transporter
-                          ? "border-red-300"
-                          : "border-gray-300"
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.transporter
+                        ? "border-red-300"
+                        : "border-gray-300"
+                        }`}
                     >
                       <option value="">Select transporter</option>
                       {transporters.map((transporter) => (
@@ -1000,9 +999,8 @@ export default function ProductsPage() {
                     </label>
                     <select
                       {...register("retailer")}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${
-                        errors.retailer ? "border-red-300" : "border-gray-300"
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.retailer ? "border-red-300" : "border-gray-300"
+                        }`}
                     >
                       <option value="">Select retailer</option>
                       {retailers.map((retailer) => (
@@ -1021,24 +1019,40 @@ export default function ProductsPage() {
                 </div>
 
                 {/* Description */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description (Optional)
-                  </label>
-                  <textarea
-                    {...register("description")}
-                    rows={3}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${
-                      errors.description ? "border-red-300" : "border-gray-300"
-                    }`}
-                    placeholder="Enter product description (optional)"
-                  />
-                  {errors.description && (
-                    <p className="mt-1 text-sm text-red-600 flex items-center">
-                      <MdWarning className="w-4 h-4 mr-1" />
-                      {errors.description.message}
-                    </p>
-                  )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description (Optional)
+                    </label>
+                    <textarea
+                      {...register("description")}
+                      rows={3}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.description ? "border-red-300" : "border-gray-300"
+                        }`}
+                      placeholder="Enter product description (optional)"
+                    />
+                    {errors.description && (
+                      <p className="mt-1 text-sm text-red-600 flex items-center">
+                        <MdWarning className="w-4 h-4 mr-1" />
+                        {errors.description.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Transporter Fees */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Transporter Fees *
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      className={`w-full px-3 py-2 border rounded-lg border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-gray-500`}
+                      placeholder="1"
+                      value={transporterFees}
+                      onChange={(e) => setTransporterFees(Number(e.target.value))}
+                    />
+                  </div>
                 </div>
 
                 {/* Action Buttons */}
