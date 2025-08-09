@@ -10,38 +10,38 @@ library LibSafeHTS {
     // 90 days in seconds
     int32 private constant DEFAULT_AUTO_RENEW_PERIOD = 7776000;
 
-    error CryptoTransferFailed();
-    error MintFailed();
-    error BurnFailed();
-    error MultipleAssociationsFailed();
-    error SingleAssociationFailed();
-    error MultipleDissociationsFailed();
-    error SingleDissociationFailed();
-    error TokensTransferFailed();
-    error TokensTransferFromFailed();
-    error NFTsTransferFailed();
-    error TokenTransferFailed();
-    error NFTTransferFailed();
-    error CreateFungibleTokenFailed();
-    error CreateFungibleTokenWithCustomFeesFailed();
-    error CreateNonFungibleTokenFailed();
-    error CreateNonFungibleTokenWithCustomFeesFailed();
-    error ApproveFailed();
-    error NFTApproveFailed();
-    error SetTokenApprovalForAllFailed();
-    error TokenDeleteFailed();
-    error FreezeTokenFailed();
-    error UnfreezeTokenFailed();
-    error GrantTokenKYCFailed();
-    error RevokeTokenKYCFailed();
-    error PauseTokenFailed();
-    error UnpauseTokenFailed();
-    error WipeTokenAccountFailed();
-    error WipeTokenAccountNFTFailed();
-    error UpdateTokenInfoFailed();
-    error UpdateTokenExpiryInfoFailed();
-    error UpdateTokenKeysFailed();
-    error UpdateTokenCustomFeesFailed();
+    error CryptoTransferFailed(int32 responseCode);
+    error MintFailed(int32 responseCode);
+    error BurnFailed(int32 responseCode);
+    error MultipleAssociationsFailed(int32 responseCode);
+    error SingleAssociationFailed(int32 responseCode);
+    error MultipleDissociationsFailed(int32 responseCode);
+    error SingleDissociationFailed(int32 responseCode);
+    error TokensTransferFailed(int32 responseCode);
+    error TokensTransferFromFailed(int32 responseCode);
+    error NFTsTransferFailed(int32 responseCode);
+    error TokenTransferFailed(int32 responseCode);
+    error NFTTransferFailed(int32 responseCode);
+    error CreateFungibleTokenFailed(int32 responseCode);
+    error CreateFungibleTokenWithCustomFeesFailed(int32 responseCode);
+    error CreateNonFungibleTokenFailed(int32 responseCode);
+    error CreateNonFungibleTokenWithCustomFeesFailed(int32 responseCode);
+    error ApproveFailed(int32 responseCode);
+    error NFTApproveFailed(int32 responseCode);
+    error SetTokenApprovalForAllFailed(int32 responseCode);
+    error TokenDeleteFailed(int32 responseCode);
+    error FreezeTokenFailed(int32 responseCode);
+    error UnfreezeTokenFailed(int32 responseCode);
+    error GrantTokenKYCFailed(int32 responseCode);
+    error RevokeTokenKYCFailed(int32 responseCode);
+    error PauseTokenFailed(int32 responseCode);
+    error UnpauseTokenFailed(int32 responseCode);
+    error WipeTokenAccountFailed(int32 responseCode);
+    error WipeTokenAccountNFTFailed(int32 responseCode);
+    error UpdateTokenInfoFailed(int32 responseCode);
+    error UpdateTokenExpiryInfoFailed(int32 responseCode);
+    error UpdateTokenKeysFailed(int32 responseCode);
+    error UpdateTokenCustomFeesFailed(int32 responseCode);
 
     function safeCryptoTransfer(
         IHederaTokenService.TransferList memory transferList,
@@ -50,68 +50,74 @@ library LibSafeHTS {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.cryptoTransfer.selector, transferList, tokenTransfers)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert CryptoTransferFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert CryptoTransferFailed(responseCode);
     }
 
     function safeMintToken(address token, int64 amount, bytes[] memory metadata)
         internal
         returns (int64 newTotalSupply, int64[] memory serialNumbers)
     {
-        int32 responseCode;
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.mintToken.selector, token, amount, metadata)
         );
+        int32 responseCode;
         (responseCode, newTotalSupply, serialNumbers) = success
             ? abi.decode(result, (int32, int64, int64[]))
             : (HederaResponseCodes.UNKNOWN, int64(0), new int64[](0));
-        if (responseCode != HederaResponseCodes.SUCCESS) revert MintFailed();
+        if (responseCode != HederaResponseCodes.SUCCESS) revert MintFailed(responseCode);
     }
 
     function safeBurnToken(address token, int64 amount, int64[] memory serialNumbers)
         internal
         returns (int64 newTotalSupply)
     {
-        int32 responseCode;
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.burnToken.selector, token, amount, serialNumbers)
         );
+        int32 responseCode;
         (responseCode, newTotalSupply) =
             success ? abi.decode(result, (int32, int64)) : (HederaResponseCodes.UNKNOWN, int64(0));
-        if (responseCode != HederaResponseCodes.SUCCESS) revert BurnFailed();
+        if (responseCode != HederaResponseCodes.SUCCESS) revert BurnFailed(responseCode);
     }
 
     function safeAssociateTokens(address account, address[] memory tokens) internal {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.associateTokens.selector, account, tokens)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert MultipleAssociationsFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert MultipleAssociationsFailed(responseCode);
     }
 
     function safeAssociateToken(address token, address account) internal {
         (bool success, bytes memory result) =
             PRECOMPILE_ADDRESS.call(abi.encodeWithSelector(IHederaTokenService.associateToken.selector, account, token));
-        if (!tryDecodeSuccessResponseCode(success, result)) revert SingleAssociationFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert SingleAssociationFailed(responseCode);
     }
 
     function safeDissociateTokens(address account, address[] memory tokens) internal {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.dissociateTokens.selector, account, tokens)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert MultipleDissociationsFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert MultipleDissociationsFailed(responseCode);
     }
 
     function safeDissociateToken(address token, address account) internal {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.dissociateToken.selector, account, token)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert SingleDissociationFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert SingleDissociationFailed(responseCode);
     }
 
     function safeTransferTokens(address token, address[] memory accountIds, int64[] memory amounts) internal {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.transferTokens.selector, token, accountIds, amounts)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert TokensTransferFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert TokensTransferFailed(responseCode);
     }
 
     /// forge-lint: disable-next-line(mixed-case-function)
@@ -124,21 +130,24 @@ library LibSafeHTS {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.transferNFTs.selector, token, sender, receiver, serialNumber)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert NFTsTransferFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert NFTsTransferFailed(responseCode);
     }
 
     function safeTransferToken(address token, address sender, address receiver, int64 amount) internal {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.transferToken.selector, token, sender, receiver, amount)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert TokenTransferFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert TokenTransferFailed(responseCode);
     }
 
     function safeTransferFromToken(address token, address from, address to, int64 amount) internal {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.transferFrom.selector, token, from, to, amount)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert TokensTransferFromFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert TokensTransferFromFailed(responseCode);
     }
 
     /// forge-lint: disable-next-line(mixed-case-function)
@@ -146,7 +155,8 @@ library LibSafeHTS {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.transferNFT.selector, token, sender, receiver, serialNumber)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert NFTTransferFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert NFTTransferFailed(responseCode);
     }
 
     function safeCreateFungibleToken(
@@ -155,15 +165,15 @@ library LibSafeHTS {
         int32 decimals
     ) internal returns (address tokenAddress) {
         nonEmptyExpiry(token);
-        int32 responseCode;
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call{value: msg.value}(
             abi.encodeWithSelector(
                 IHederaTokenService.createFungibleToken.selector, token, initialTotalSupply, decimals
             )
         );
+        int32 responseCode;
         (responseCode, tokenAddress) =
             success ? abi.decode(result, (int32, address)) : (HederaResponseCodes.UNKNOWN, address(0));
-        if (responseCode != HederaResponseCodes.SUCCESS) revert CreateFungibleTokenFailed();
+        if (responseCode != HederaResponseCodes.SUCCESS) revert CreateFungibleTokenFailed(responseCode);
     }
 
     function safeCreateFungibleTokenWithCustomFees(
@@ -174,7 +184,6 @@ library LibSafeHTS {
         IHederaTokenService.FractionalFee[] memory fractionalFees
     ) internal returns (address tokenAddress) {
         nonEmptyExpiry(token);
-        int256 responseCode;
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call{value: msg.value}(
             abi.encodeWithSelector(
                 IHederaTokenService.createFungibleTokenWithCustomFees.selector,
@@ -185,9 +194,10 @@ library LibSafeHTS {
                 fractionalFees
             )
         );
+        int32 responseCode;
         (responseCode, tokenAddress) =
             success ? abi.decode(result, (int32, address)) : (HederaResponseCodes.UNKNOWN, address(0));
-        if (responseCode != HederaResponseCodes.SUCCESS) revert CreateFungibleTokenWithCustomFeesFailed();
+        if (responseCode != HederaResponseCodes.SUCCESS) revert CreateFungibleTokenWithCustomFeesFailed(responseCode);
     }
 
     function safeCreateNonFungibleToken(IHederaTokenService.HederaToken memory token)
@@ -195,13 +205,13 @@ library LibSafeHTS {
         returns (address tokenAddress)
     {
         nonEmptyExpiry(token);
-        int256 responseCode;
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call{value: msg.value}(
             abi.encodeWithSelector(IHederaTokenService.createNonFungibleToken.selector, token)
         );
+        int32 responseCode;
         (responseCode, tokenAddress) =
             success ? abi.decode(result, (int32, address)) : (HederaResponseCodes.UNKNOWN, address(0));
-        if (responseCode != HederaResponseCodes.SUCCESS) revert CreateNonFungibleTokenFailed();
+        if (responseCode != HederaResponseCodes.SUCCESS) revert CreateNonFungibleTokenFailed(responseCode);
     }
 
     function safeCreateNonFungibleTokenWithCustomFees(
@@ -210,22 +220,25 @@ library LibSafeHTS {
         IHederaTokenService.RoyaltyFee[] memory royaltyFees
     ) internal returns (address tokenAddress) {
         nonEmptyExpiry(token);
-        int256 responseCode;
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call{value: msg.value}(
             abi.encodeWithSelector(
                 IHederaTokenService.createNonFungibleTokenWithCustomFees.selector, token, fixedFees, royaltyFees
             )
         );
+        int32 responseCode;
         (responseCode, tokenAddress) =
             success ? abi.decode(result, (int32, address)) : (HederaResponseCodes.UNKNOWN, address(0));
-        if (responseCode != HederaResponseCodes.SUCCESS) revert CreateNonFungibleTokenWithCustomFeesFailed();
+        if (responseCode != HederaResponseCodes.SUCCESS) {
+            revert CreateNonFungibleTokenWithCustomFeesFailed(responseCode);
+        }
     }
 
     function safeApprove(address token, address spender, uint256 amount) internal {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.approve.selector, token, spender, amount)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert ApproveFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert ApproveFailed(responseCode);
     }
 
     /// forge-lint: disable-next-line(mixed-case-function)
@@ -233,63 +246,73 @@ library LibSafeHTS {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.approveNFT.selector, token, approved, serialNumber)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert NFTApproveFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert NFTApproveFailed(responseCode);
     }
 
     function safeSetApprovalForAll(address token, address operator, bool approved) internal {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.setApprovalForAll.selector, token, operator, approved)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert SetTokenApprovalForAllFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert SetTokenApprovalForAllFailed(responseCode);
     }
 
     function safeDeleteToken(address token) internal {
         (bool success, bytes memory result) =
             PRECOMPILE_ADDRESS.call(abi.encodeWithSelector(IHederaTokenService.deleteToken.selector, token));
-        if (!tryDecodeSuccessResponseCode(success, result)) revert TokenDeleteFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert TokenDeleteFailed(responseCode);
     }
 
     function safeFreezeToken(address token, address account) internal {
         (bool success, bytes memory result) =
             PRECOMPILE_ADDRESS.call(abi.encodeWithSelector(IHederaTokenService.freezeToken.selector, token, account));
-        if (!tryDecodeSuccessResponseCode(success, result)) revert FreezeTokenFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert FreezeTokenFailed(responseCode);
     }
 
     function safeUnfreezeToken(address token, address account) internal {
         (bool success, bytes memory result) =
             PRECOMPILE_ADDRESS.call(abi.encodeWithSelector(IHederaTokenService.unfreezeToken.selector, token, account));
-        if (!tryDecodeSuccessResponseCode(success, result)) revert UnfreezeTokenFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert UnfreezeTokenFailed(responseCode);
     }
 
     function safeGrantTokenKyc(address token, address account) internal {
         (bool success, bytes memory result) =
             PRECOMPILE_ADDRESS.call(abi.encodeWithSelector(IHederaTokenService.grantTokenKyc.selector, token, account));
-        if (!tryDecodeSuccessResponseCode(success, result)) revert GrantTokenKYCFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert GrantTokenKYCFailed(responseCode);
     }
 
     function safeRevokeTokenKyc(address token, address account) internal {
         (bool success, bytes memory result) =
             PRECOMPILE_ADDRESS.call(abi.encodeWithSelector(IHederaTokenService.revokeTokenKyc.selector, token, account));
-        if (!tryDecodeSuccessResponseCode(success, result)) revert RevokeTokenKYCFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert RevokeTokenKYCFailed(responseCode);
     }
 
     function safePauseToken(address token) internal {
         (bool success, bytes memory result) =
             PRECOMPILE_ADDRESS.call(abi.encodeWithSelector(IHederaTokenService.pauseToken.selector, token));
-        if (!tryDecodeSuccessResponseCode(success, result)) revert PauseTokenFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert PauseTokenFailed(responseCode);
     }
 
     function safeUnpauseToken(address token) internal {
         (bool success, bytes memory result) =
             PRECOMPILE_ADDRESS.call(abi.encodeWithSelector(IHederaTokenService.unpauseToken.selector, token));
-        if (!tryDecodeSuccessResponseCode(success, result)) revert UnpauseTokenFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert UnpauseTokenFailed(responseCode);
     }
 
     function safeWipeTokenAccount(address token, address account, int64 amount) internal {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.wipeTokenAccount.selector, token, account, amount)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert WipeTokenAccountFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert WipeTokenAccountFailed(responseCode);
     }
 
     /// forge-lint: disable-next-line(mixed-case-function)
@@ -297,7 +320,8 @@ library LibSafeHTS {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.wipeTokenAccountNFT.selector, token, account, serialNumbers)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert WipeTokenAccountNFTFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert WipeTokenAccountNFTFailed(responseCode);
     }
 
     function safeUpdateTokenInfo(address token, IHederaTokenService.HederaToken memory tokenInfo) internal {
@@ -305,20 +329,23 @@ library LibSafeHTS {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.updateTokenInfo.selector, token, tokenInfo)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert UpdateTokenInfoFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert UpdateTokenInfoFailed(responseCode);
     }
 
     function safeUpdateTokenExpiryInfo(address token, IHederaTokenService.Expiry memory expiryInfo) internal {
         (bool success, bytes memory result) = PRECOMPILE_ADDRESS.call(
             abi.encodeWithSelector(IHederaTokenService.updateTokenExpiryInfo.selector, token, expiryInfo)
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert UpdateTokenExpiryInfoFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert UpdateTokenExpiryInfoFailed(responseCode);
     }
 
     function safeUpdateTokenKeys(address token, IHederaTokenService.TokenKey[] memory keys) internal {
         (bool success, bytes memory result) =
             PRECOMPILE_ADDRESS.call(abi.encodeWithSelector(IHederaTokenService.updateTokenKeys.selector, token, keys));
-        if (!tryDecodeSuccessResponseCode(success, result)) revert UpdateTokenKeysFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert UpdateTokenKeysFailed(responseCode);
     }
 
     function safeUpdateFungibleTokenCustomFees(
@@ -331,11 +358,17 @@ library LibSafeHTS {
                 IHederaTokenService.updateFungibleTokenCustomFees.selector, token, fixedFees, fractionalFees
             )
         );
-        if (!tryDecodeSuccessResponseCode(success, result)) revert UpdateTokenCustomFeesFailed();
+        (bool htsSuccess, int32 responseCode) = tryDecodeSuccessResponseCode(success, result);
+        if (!htsSuccess) revert UpdateTokenCustomFeesFailed(responseCode);
     }
 
-    function tryDecodeSuccessResponseCode(bool success, bytes memory result) private pure returns (bool) {
-        return (success ? abi.decode(result, (int32)) : HederaResponseCodes.UNKNOWN) == HederaResponseCodes.SUCCESS;
+    function tryDecodeSuccessResponseCode(bool _success, bytes memory _result)
+        private
+        pure
+        returns (bool success_, int32 responseCode_)
+    {
+        responseCode_ = abi.decode(_result, (int32));
+        success_ = (_success ? responseCode_ : HederaResponseCodes.UNKNOWN) == HederaResponseCodes.SUCCESS;
     }
 
     function nonEmptyExpiry(IHederaTokenService.HederaToken memory token) private view {
