@@ -11,6 +11,7 @@ import {HelperContract} from "@diamond-test/helpers/HelperContract.sol";
 import {Chronicle} from "@chronicle/Chronicle.sol";
 import {PartiesFacet} from "@chronicle/facets/PartiesFacet.sol";
 import {ProductsFacet} from "@chronicle/facets/ProductsFacet.sol";
+import {SupplyChainFacet} from "@chronicle/facets/SupplyChainFacet.sol";
 import {InitHTCKeyTypes} from "@chronicle/initializers/InitHTCKeyTypes.sol";
 
 abstract contract ChronicleDeployer is HelperContract {
@@ -21,13 +22,14 @@ abstract contract ChronicleDeployer is HelperContract {
         OwnableRolesFacet ownableRolesFacet = new OwnableRolesFacet();
         PartiesFacet partiesFacet = new PartiesFacet();
         ProductsFacet productsFacet = new ProductsFacet();
+        SupplyChainFacet supplyChainFacet = new SupplyChainFacet();
 
         // deploy initializers
         MultiInit multiInit = new MultiInit();
         ERC165Init erc165Init = new ERC165Init();
         InitHTCKeyTypes initHtcKeyTypes = new InitHTCKeyTypes();
 
-        FacetCut[] memory facetCuts = new FacetCut[](5);
+        FacetCut[] memory facetCuts = new FacetCut[](6);
 
         facetCuts[0] = FacetCut({
             facetAddress: address(diamondCutFacet),
@@ -57,6 +59,12 @@ abstract contract ChronicleDeployer is HelperContract {
             facetAddress: address(productsFacet),
             action: FacetCutAction.Add,
             functionSelectors: _generateSelectors("ProductsFacet")
+        });
+
+        facetCuts[5] = FacetCut({
+            facetAddress: address(supplyChainFacet),
+            action: FacetCutAction.Add,
+            functionSelectors: _generateSelectors("SupplyChainFacet")
         });
 
         address[] memory initAddr = new address[](2);

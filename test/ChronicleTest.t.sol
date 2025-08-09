@@ -17,7 +17,7 @@ contract ChronicleTest is DeployedChronicleState {
     }
 
     function test_ChronicleFacetsDeployed() public view {
-        assertEq(facetAddresses.length, 5);
+        assertEq(facetAddresses.length, 6);
         for (uint256 i; i < facetAddresses.length; ++i) {
             assertNotEq(address(facetAddresses[i]), address(0));
         }
