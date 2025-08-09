@@ -109,8 +109,6 @@ ProductsFacet.updateProduct(tokenAddress, "Widget A+", "Batch 001A", 120);
 2. **Run tests:**
    ```sh
    forge test
-   # or
-   forge test
    ```
 3. **Upgrade contracts (DiamondCut):**
    - Deploy new facet contract.
