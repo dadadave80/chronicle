@@ -27,6 +27,10 @@ abstract contract DeployedChronicleState is ChronicleDeployer {
         "SupplyChainFacet"
     ];
     address public constant CHRONICLE_OWNER = address(1337);
+    address public TESTER = makeAddr("tester");
+    address public SUPPLIER = makeAddr("supplier");
+    address public TRANSPORTER = makeAddr("transporter");
+    address public RETAILER = makeAddr("retailer");
 
     function setUp() public virtual {
         vm.prank(CHRONICLE_OWNER);
