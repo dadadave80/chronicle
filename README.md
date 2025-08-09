@@ -1,7 +1,6 @@
-# Chronify: Modular NFT‑Powered Supply Chain on Hedera
+# Chronify: Modular Supply Chain on Hedera
 
-> **Chronify is a composable, upgradeable supply chain platform leveraging the Diamond Standard (EIP‑2535) and Hedera Token Service NFTs for end‑to‑end traceability. It provides a transparent and immutable way to track products from origin to destination, ensuring accountability and reducing fraud.
-**
+> **Chronify is a composable, upgradeable supply chain platform leveraging the Diamond Standard (EIP‑2535) and Hedera Token Service for end‑to‑end traceability. It provides a transparent and immutable way to track products from origin to destination, ensuring accountability and reducing fraud.**
 
 ---
 
@@ -9,7 +8,7 @@
 
 Chronify is a modular smart contract system for supply chain management, built on the Hedera network. It employs the Diamond Standard (EIP‑2535) for upgradeable, facet‑based architecture, allowing seamless extension and maintenance. Core supply chain entities—**parties**, **products**, and **supply chain events**—are managed as distinct facets. The system integrates Hedera Token Service (HTS) to mint and transfer NFTs representing unique products, enabling secure, verifiable, and transparent asset tracking across the supply chain.
 
-By combining modularity, upgradeability, and HTS NFT integration, Chronicle delivers a robust foundation for traceable, compliant, and future‑proof supply chain solutions.
+By combining modularity, upgradeability, and HTS NFT integration, Chronify delivers a robust foundation for traceable, compliant, and future‑proof supply chain solutions.
 
 ---
 
@@ -28,9 +27,6 @@ By combining modularity, upgradeability, and HTS NFT integration, Chronicle deli
 ## Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v18+ recommended)
-- [Solidity](https://docs.soliditylang.org/) 0.8+
-- [Hedera Token Service SDK](https://github.com/hashgraph/hedera-smart-contracts)
 - [Foundry](https://book.getfoundry.sh/) (optional, for advanced EVM tooling)
 
 ### Installation
@@ -41,8 +37,7 @@ By combining modularity, upgradeability, and HTS NFT integration, Chronicle deli
    ```
 2. **Install dependencies:**
    ```sh
-   npm install
-   # or yarn
+   forge install
    ```
 3. **Configure network:**
    - Update `foundry.toml` or `.env` with your Hedera RPC and credentials.
@@ -56,18 +51,21 @@ src/
 ├── Chronicle.sol                # Diamond proxy root contract
 ├── facets/
 │   ├── PartiesFacet.sol         # Party registration, roles, access control
-│   └── ProductsFacet.sol        # Product/NFT management, minting, transfer
+│   ├── ProductsFacet.sol        # Product/NFT management, minting, transfer
+│   └── SupplyChainFacet.sol     # Supply chain event logging
 ├── initializers/
 │   └── InitHTCKeyTypes.sol      # Key type initialization for HTS
 ├── libraries/
 │   ├── LibParty.sol             # Party logic, storage, helpers
 │   ├── LibProduct.sol           # Product logic, HTS/NFT integration
+│   ├── LibSupplyChain.sol       # Supply chain logic, HTS/NFT integration
 │   ├── hts/
 │   │   ├── LibHederaTokenService.sol # HTS interface, NFT mint/transfer
-│   │   └── LibKeyHelper.sol     # Key management for HTS tokens
+│   │   └── LibKeyHelper.sol     # Key generation for HTS tokens
 │   ├── logs/
 │   │   ├── PartyLogs.sol        # Events for party actions
-│   │   └── ProductLogs.sol      # Events for product actions
+│   │   ├── ProductLogs.sol      # Events for product actions
+│   │   └── SupplyChainLogs.sol  # Events for supply chain actions
 │   └── types/                   # Storage structs/enums for parties/products/keys
 ```
 
@@ -106,13 +104,11 @@ ProductsFacet.updateProduct(tokenAddress, "Widget A+", "Batch 001A", 120);
 
 1. **Compile contracts:**
    ```sh
-   npx hardhat compile
-   # or
    forge build
    ```
 2. **Run tests:**
    ```sh
-   npx hardhat test
+   forge test
    # or
    forge test
    ```
