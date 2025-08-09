@@ -19,6 +19,8 @@ const SideBar = ({
 
   const pathname = usePathname();
 
+
+
   const handleCloseSideBar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -37,9 +39,8 @@ const SideBar = ({
   return (
     <aside
       ref={sidebar}
-      className={`absolute left-0 top-0 z-[9999] flex h-[100dvh] w-72 flex-col justify-between overflow-y-hidden bg-black duration-300 ease-linear rounded-[8px] lg:static lg:translate-x-0 ${
-        sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      }`}
+      className={`absolute left-0 top-0 z-[9999] flex h-[100dvh] w-72 flex-col justify-between overflow-y-hidden bg-black duration-300 ease-linear rounded-[8px] lg:static lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
     >
       <div className="flex flex-col">
         {/* <!-- SIDEBAR HEADER --> */}

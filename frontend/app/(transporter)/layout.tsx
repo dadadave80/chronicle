@@ -3,11 +3,12 @@ import Footer from "@/components/shared/dash-footer";
 import Header from "@/components/shared/header";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Logo from "@/components/shared/logo";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { MdDeliveryDining } from "react-icons/md";
 import { GoGear } from "react-icons/go";
+import { useAppKitAccount } from "@reown/appkit/react";
 
 export default function DashboardLayout({
   children,
@@ -15,6 +16,16 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+
+  const { isConnected } = useAppKitAccount();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isConnected) {
+      router.push("/");
+    }
+  }, [isConnected, router]);
+
   return (
     <div className=" bg-white lg:p-1.5">
       {/* Page Wrapper Start  */}
@@ -77,9 +88,8 @@ const SideBar = ({
   return (
     <aside
       ref={sidebar}
-      className={`absolute left-0 top-0 z-[9999] flex h-[100dvh] w-72 flex-col justify-between overflow-y-hidden bg-black duration-300 ease-linear rounded-[8px] lg:static lg:translate-x-0 ${
-        sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      }`}
+      className={`absolute left-0 top-0 z-[9999] flex h-[100dvh] w-72 flex-col justify-between overflow-y-hidden bg-black duration-300 ease-linear rounded-[8px] lg:static lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
     >
       <div className="flex flex-col">
         {/* <!-- SIDEBAR HEADER --> */}

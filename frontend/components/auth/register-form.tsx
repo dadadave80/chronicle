@@ -2,7 +2,6 @@
 
 import Logo from "../shared/logo";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import useRegister from "@/hooks/useRegister";
 
 const registerSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -55,8 +55,6 @@ export default RegisterForm;
 const FormInputs = () => {
   const [isSending, setIsSending] = useState<boolean>(false);
 
-  const router = useRouter();
-
   const {
     register,
     handleSubmit,
@@ -75,11 +73,14 @@ const FormInputs = () => {
 
   const watchedRole = watch("role");
 
+  const { registerUser } = useRegister();
+
   const onSubmit = async (data: RegisterFormData) => {
     setIsSending(true);
     try {
-      console.log(data);
-      router.push("/dashboard");
+      const { name, role } = data;
+      await registerUser(name, role);
+      setIsSending(false);
     } catch (error) {
       setIsSending(false);
       console.error(error);
@@ -114,9 +115,8 @@ const FormInputs = () => {
           type="text"
           id="name"
           placeholder="Adams"
-          className={`w-full rounded-[8px] border bg-[#F9FAFB] h-[48px] font-nunitoSans text-base placeholder:text-base placeholder:text-[#8E8C9C] text-[#333] px-4 outline-none transition duration-300 ${
-            errors.name ? "border-red-500" : "border-[#E5E7EB]"
-          }`}
+          className={`w-full rounded-[8px] border bg-[#F9FAFB] h-[48px] font-nunitoSans text-base placeholder:text-base placeholder:text-[#8E8C9C] text-[#333] px-4 outline-none transition duration-300 ${errors.name ? "border-red-500" : "border-[#E5E7EB]"
+            }`}
         />
 
         {errors.name && <ErrorDisplay message={errors.name.message || ""} />}
@@ -133,9 +133,8 @@ const FormInputs = () => {
 
         <Select value={watchedRole || ""} onValueChange={handleRoleChange}>
           <SelectTrigger
-            className={`w-full rounded-[8px] border bg-[#F9FAFB] h-[48px] font-nunitoSans text-base px-4 outline-none transition duration-300 ${
-              errors.role ? "border-red-500" : "border-[#E5E7EB]"
-            } ${watchedRole ? "text-[#333]" : "text-[#8E8C9C]"}`}
+            className={`w-full rounded-[8px] border bg-[#F9FAFB] h-[48px] font-nunitoSans text-base px-4 outline-none transition duration-300 ${errors.role ? "border-red-500" : "border-[#E5E7EB]"
+              } ${watchedRole ? "text-[#333]" : "text-[#8E8C9C]"}`}
           >
             <SelectValue placeholder="Select a role" />
           </SelectTrigger>
@@ -153,7 +152,7 @@ const FormInputs = () => {
       <button
         type="submit"
         disabled={!(isDirty && isValid) || isSending}
-        className="w-full h-[48px] mt-6 flex justify-center items-center rounded-[8px] bg-black text-gray-100 font-nunitoSans font-[600] text-[16px] disabled:opacity-80 disabled:cursor-not-allowed transition-opacity duration-200"
+        className="w-full h-[48px] mt-6 flex justify-center cursor-pointer items-center rounded-[8px] bg-black text-gray-100 font-nunitoSans font-[600] text-[16px] disabled:opacity-80 disabled:cursor-not-allowed transition-opacity duration-200"
       >
         {isSending ? (
           <span className="flex items-center text-gray-200 gap-2">
