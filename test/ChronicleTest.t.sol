@@ -6,6 +6,7 @@ import {DeployedChronicleState} from "@chronicle-test/helpers/TestStates.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {IDiamondCut} from "@diamond/interfaces/IDiamondCut.sol";
 import {IDiamondLoupe} from "@diamond/interfaces/IDiamondLoupe.sol";
+import {Role, Rating} from "@chronicle-types/PartyStorage.sol";
 
 contract ChronicleTest is DeployedChronicleState {
     function test_ChronicleDeployed() public view {
@@ -75,5 +76,86 @@ contract ChronicleTest is DeployedChronicleState {
 
     function test_SupportsIDiamondLoupe() public view {
         assertTrue(diamondLoupeFacet.supportsInterface(type(IDiamondLoupe).interfaceId)); // IDiamondLoupe interface ID
+    }
+
+    function test_RegisterParty() public {
+        vm.startPrank(TESTER);
+        partiesFacet.registerParty("Party", Role.Retailer);
+
+        assertTrue(partiesFacet.hasActiveRole(TESTER, Role.Retailer));
+        assertEq(partiesFacet.getParty(TESTER).name, "Party");
+        assertEq(partiesFacet.getParty(TESTER).addr, TESTER);
+        assertEq(uint8(partiesFacet.getParty(TESTER).role), uint8(Role.Retailer));
+        assertEq(partiesFacet.getParty(TESTER).active, true);
+        assertEq(partiesFacet.getParty(TESTER).frozen, false);
+        assertEq(uint8(partiesFacet.getParty(TESTER).rating), uint8(Rating.Zero));
+    }
+
+    function test_DeactivateParty() public {
+        vm.startPrank(TESTER);
+        partiesFacet.registerParty("Party", Role.Retailer);
+        partiesFacet.deactivateParty(Role.Retailer);
+
+        assertFalse(partiesFacet.hasActiveRole(TESTER, Role.Retailer));
+    }
+
+    function test_GetActiveParties() public {
+        vm.prank(RETAILER);
+        partiesFacet.registerParty("Party", Role.Retailer);
+        vm.prank(SUPPLIER);
+        partiesFacet.registerParty("Party2", Role.Supplier);
+        vm.prank(TRANSPORTER);
+        partiesFacet.registerParty("Party3", Role.Transporter);
+
+        assertEq(partiesFacet.getActiveParties().length, 3);
+    }
+
+    function test_GetActivePartiesByRole() public {
+        vm.prank(RETAILER);
+        partiesFacet.registerParty("Party", Role.Retailer);
+        vm.prank(SUPPLIER);
+        partiesFacet.registerParty("Party2", Role.Supplier);
+        vm.prank(TRANSPORTER);
+        partiesFacet.registerParty("Party3", Role.Transporter);
+
+        assertEq(partiesFacet.getActivePartiesByRole(Role.Retailer).length, 1);
+        assertEq(partiesFacet.getActivePartiesByRole(Role.Supplier).length, 1);
+        assertEq(partiesFacet.getActivePartiesByRole(Role.Transporter).length, 1);
+    }
+
+    function test_GetActivePartiesAddress() public {
+        vm.prank(RETAILER);
+        partiesFacet.registerParty("Party", Role.Retailer);
+        vm.prank(SUPPLIER);
+        partiesFacet.registerParty("Party2", Role.Supplier);
+        vm.prank(TRANSPORTER);
+        partiesFacet.registerParty("Party3", Role.Transporter);
+
+        assertEq(partiesFacet.getActivePartiesAddress().length, 3);
+    }
+
+    function test_GetActivePartiesAddressByRole() public {
+        vm.prank(RETAILER);
+        partiesFacet.registerParty("Party", Role.Retailer);
+        vm.prank(SUPPLIER);
+        partiesFacet.registerParty("Party2", Role.Supplier);
+        vm.prank(TRANSPORTER);
+        partiesFacet.registerParty("Party3", Role.Transporter);
+
+        assertEq(partiesFacet.getActivePartiesAddressByRole(Role.Retailer).length, 1);
+        assertEq(partiesFacet.getActivePartiesAddressByRole(Role.Supplier).length, 1);
+        assertEq(partiesFacet.getActivePartiesAddressByRole(Role.Transporter).length, 1);
+    }
+
+    function test_GetParty() public {
+        vm.prank(RETAILER);
+        partiesFacet.registerParty("Party", Role.Retailer);
+
+        assertEq(partiesFacet.getParty(RETAILER).name, "Party");
+        assertEq(partiesFacet.getParty(RETAILER).addr, RETAILER);
+        assertEq(uint8(partiesFacet.getParty(RETAILER).role), uint8(Role.Retailer));
+        assertEq(partiesFacet.getParty(RETAILER).active, true);
+        assertEq(partiesFacet.getParty(RETAILER).frozen, false);
+        assertEq(uint8(partiesFacet.getParty(RETAILER).rating), uint8(Rating.Zero));
     }
 }
