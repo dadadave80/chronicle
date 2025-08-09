@@ -6,6 +6,7 @@ import {DiamondLoupeFacet} from "@diamond/facets/DiamondLoupeFacet.sol";
 import {OwnableRolesFacet} from "@diamond/facets/OwnableRolesFacet.sol";
 import {PartiesFacet} from "@chronicle/facets/PartiesFacet.sol";
 import {ProductsFacet} from "@chronicle/facets/ProductsFacet.sol";
+import {SupplyChainFacet} from "@chronicle/facets/SupplyChainFacet.sol";
 import {ChronicleDeployer} from "@chronicle-test/helpers/ChronicleDeployer.sol";
 
 abstract contract DeployedChronicleState is ChronicleDeployer {
@@ -15,13 +16,20 @@ abstract contract DeployedChronicleState is ChronicleDeployer {
     OwnableRolesFacet public ownableRolesFacet;
     PartiesFacet public partiesFacet;
     ProductsFacet public productsFacet;
+    SupplyChainFacet public supplyChainFacet;
     address[] public facetAddresses;
-    string[5] public facetNames =
-        ["DiamondCutFacet", "DiamondLoupeFacet", "OwnableRolesFacet", "PartiesFacet", "ProductsFacet"];
+    string[6] public facetNames = [
+        "DiamondCutFacet",
+        "DiamondLoupeFacet",
+        "OwnableRolesFacet",
+        "PartiesFacet",
+        "ProductsFacet",
+        "SupplyChainFacet"
+    ];
     address public constant CHRONICLE_OWNER = address(1337);
 
-    function setUp() public {
-        vm.startPrank(CHRONICLE_OWNER);
+    function setUp() public virtual {
+        vm.prank(CHRONICLE_OWNER);
         chronicle = _deployChronicle(CHRONICLE_OWNER);
 
         diamondCutFacet = DiamondCutFacet(chronicle);
@@ -29,6 +37,7 @@ abstract contract DeployedChronicleState is ChronicleDeployer {
         ownableRolesFacet = OwnableRolesFacet(chronicle);
         partiesFacet = PartiesFacet(chronicle);
         productsFacet = ProductsFacet(chronicle);
+        supplyChainFacet = SupplyChainFacet(chronicle);
 
         facetAddresses = diamondLoupeFacet.facetAddresses();
     }
